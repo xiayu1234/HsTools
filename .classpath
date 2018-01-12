@@ -2,5 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="poi_jar/poi-3.15-beta1.jar" sourcepath="D:/XiaYu/JAR包/poi-src-3.17-20170915.zip"/>
+	<classpathentry kind="lib" path="poi_jar/poi-examples-3.15-beta1.jar"/>
+	<classpathentry kind="lib" path="poi_jar/poi-excelant-3.15-beta1.jar"/>
+	<classpathentry kind="lib" path="poi_jar/poi-ooxml-3.15-beta1.jar"/>
+	<classpathentry kind="lib" path="poi_jar/poi-ooxml-schemas-3.15-beta1.jar"/>
+	<classpathentry kind="lib" path="poi_jar/poi-scratchpad-3.15-beta1.jar"/>
+	<classpathentry kind="lib" path="poi_jar/xmlbeans-2.6.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
