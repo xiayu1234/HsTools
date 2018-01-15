@@ -2,8 +2,7 @@ package com.hundsun.zgcs;
 
 import java.io.File;
 import java.util.ArrayList;
-
-import org.apache.poi.ss.usermodel.Workbook;
+import java.util.HashMap;
 
 public class TestApp {
 
@@ -12,15 +11,22 @@ public class TestApp {
 	}
 
 	public static void main(String[] args) {
-		File file = new File("C:\\Users\\xiayu20540\\Desktop\\ModifyDetail-595799427.xls");
-		Workbook workBook = ExcelUtil.getWorkBook(file);
-		ArrayList<ArrayList<String>> list = ExcelUtil.getColumnList(file);
-		ArrayList<String> cellList = ExcelUtil.getColumByName(file, "修改单编号");
-		for (String string : cellList) {
-			System.out.println(string);
-		}
 		
+		String str="D:\\\\test\\\\testFile.xls";  
+		String str2 = "D:\\\\test\\\\testDic.xlsx";
+		String loc1=str.replace("\\\\", "/"); 
+		String loc2 = str2.replace("\\\\", "/");
+		File file = new File(loc1);
+		File dic = new File(loc2);
 
+		ArrayList<String> list = ExcelUtil.getColumByName(file, "测试执行人");
+		ArrayList<ArrayList<String>> dicList = ExcelUtil.getColumnList(dic);
+		HashMap<String, Integer> map = TjUtil.getCount(list, dicList);
+		for (int i = 0; i < dicList.size(); i++) {
+			for (int j = 0; j < dicList.get(i).size(); j++) {
+				System.out.println(dicList.get(i).get(j) + ":" + map.get(dicList.get(i).get(j)));
+			}
+		}
 	}
 
 }

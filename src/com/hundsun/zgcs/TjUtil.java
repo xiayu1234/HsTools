@@ -1,10 +1,11 @@
 package com.hundsun.zgcs;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * 工具类
+ * 
  * @author xiayu20540
  *
  */
@@ -13,50 +14,67 @@ public class TjUtil {
 	public TjUtil() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	/**
-	 * 统计方法
-	 * @param
-	 * File 需要统计的文档
-	 * @param
-	 * target	需要统计的字段		 
-	 * @return 返回统计结果的excel文件
-	 * @param
-	 * list	每个组的组员列表
+	 * 统计数量
+	 * 
+	 * @param column
+	 *            需要统计的列
+	 * @param list
+	 *            数据字典列表
+	 * @return 统计结果的键值对
 	 */
-	public static File singleFile(File File,String target,ArrayList<String> list) {
-	
+	public static HashMap<String, Integer> getCount(ArrayList<String> column, ArrayList<ArrayList<String>> list) {
+
+		HashMap<String, Integer> map = new HashMap<>();
+		Boolean flag = false;
+		for (int i = 0; i < column.size(); i++) {
+			for (int j = 0; j < list.size(); j++) {
+
+				if (flag) {
+					// 小组数量统计
+					if (map.containsKey(list.get(j).get(0))) {
+						map.put(list.get(j).get(0), map.get(list.get(j).get(0)) + 1);
+					} else {
+						map.put(list.get(j).get(0), 1);
+					}
+					flag = false;
+				}
+				
+				// 人员数据统计
+				for (int p = 0; p < list.get(j).size(); p++) {
+					// 判断人员是否在测试执行人里
+					if (column.indexOf(list.get(j).get(p)) != -1) {
+						// 判断键值是否存在
+						if (map.containsKey(list.get(j).get(p))) {
+							map.put(list.get(j).get(p), map.get(list.get(j).get(p)) + 1);
+						} else {
+							map.put(list.get(j).get(p), 1);
+						}
+						flag = true;
+					}
+				}
+
+			}
+
+		}
+
+		return map;
+	}
+
+	/**
+	 * 获取包含在列表一中的列表二的目标值的列
+	 * 
+	 * @param list1
+	 *            列表一
+	 * @param list2
+	 *            列表二
+	 * @param targetList
+	 * @return 结果列
+	 */
+	public static ArrayList<String> getTemFile(ArrayList<String> list1, ArrayList<String> list2,
+			ArrayList<String> targetList) {
 		return null;
 	}
-	
-	/**
-	 * 生成临时文件的方法
-	 * @author xiayu20540
-	 * @param
-	 * File1	主文件
-	 * @param
-	 * File2	从文件
-	* @param
-	 * key	统计的依据
-	 * @param
-	 * target	需要统计的字段		 
-	 * @return 返回两个excel文件处理后的临时excel文件
-	 */
-	public static File getTemFile(File File1,File File2,String key,String target ) {
-		return null;	
-	}
-	
-	/**
-	 * @author xiayu20540
-	 * @param 存储数据字典的excel文件
-	 * @return 组员列表的列表
-	 */
-	public static ArrayList<ArrayList<String>> getList(File File){
-		
-		
-		return null;	
-	}
-	
-	
 
 }

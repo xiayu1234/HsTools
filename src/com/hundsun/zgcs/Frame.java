@@ -125,16 +125,11 @@ public class Frame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String str = (String) jcb.getSelectedItem();
-				// 获取小组列表
-				ArrayList<ArrayList<String>> groupList = TjUtil.getList(dictionary);
+				
 				// 根据不通的统计模式调用不用的方法
 				switch (str) {
 				case "临时补丁遗漏统计":
-					// 根据小组人员列表统计
-					for (int i = 0; i < groupList.size(); i++) {
-						ArrayList<String> personList = groupList.get(i);
-						TjUtil.singleFile(fileChoose.getSelectedFile(), "测试执行人", personList);
-					}
+					
 
 					break;
 
