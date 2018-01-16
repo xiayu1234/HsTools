@@ -5,7 +5,6 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -13,7 +12,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -24,7 +23,6 @@ public class Frame extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField textField;
 	private JComboBox jcb;
 	/*
 	 * 数据字典存放的excel
@@ -73,14 +71,13 @@ public class Frame extends JFrame {
 		label_1.setBounds(10, 50, 60, 20);
 		contentPane.add(label_1);
 
-		JTextField textField = new JTextField();
-		textField.setBounds(80, 50, 390, 20);
-		contentPane.add(textField);
-		textField.setColumns(10);
-
 		JLabel label_2 = new JLabel("统计模式:");
 		label_2.setBounds(10, 170, 60, 20);
 		contentPane.add(label_2);
+		
+		JTextPane textPane = new JTextPane();
+		textPane.setBounds(80, 50, 390, 20);
+		contentPane.add(textPane);
 
 		// 添加按钮点击事件
 		button.addActionListener(new ActionListener() {
@@ -96,7 +93,8 @@ public class Frame extends JFrame {
 				File[] fileList = fileChoose.getSelectedFiles();
 
 				for (File file : fileList) {
-					textField.setText(file.getName());
+					System.out.println(file.getName());
+					textPane.setText(file.getAbsolutePath());
 				}
 				fileChoose.showDialog(Frame.this, "确定");
 
@@ -111,7 +109,7 @@ public class Frame extends JFrame {
 		jcb.setBounds(80, 170, 390, 20);
 		contentPane.add(jcb);
 		jcb.setVisible(true);
-
+	
 		JLabel stateLabel = new JLabel("");
 		stateLabel.setBounds(480, 170, 90, 20);
 		contentPane.add(stateLabel);
@@ -119,7 +117,9 @@ public class Frame extends JFrame {
 		JButton startBut = new JButton("开始统计");
 		startBut.setBounds(240, 320, 120, 30);
 		contentPane.add(startBut);
-
+		
+		
+		//点击统计按钮的监听事件
 		startBut.addActionListener(new ActionListener() {
 
 			@Override

@@ -26,10 +26,10 @@ public class TjUtil {
 	 *            数据字典列表
 	 * @return 统计结果的键值对
 	 */
-	public static HashMap<String, Integer> getCount(ArrayList<String> column, ArrayList<ArrayList<String>> list) {
+	public static ArrayList<TjBean> getCount(ArrayList<String> column, ArrayList<ArrayList<String>> list) {
 
-		HashMap<String, Integer> map = new HashMap<>();
-		ArrayList<ArrayList<String>> resList = new ArrayList<>();
+		HashMap<Object, Integer> map = new HashMap<>();
+		ArrayList<TjBean> resList = new ArrayList<>();
 		Boolean flag = false;
 		for (int i = 0; i < column.size(); i++) {
 			for (int j = 0; j < list.size(); j++) {
@@ -61,8 +61,19 @@ public class TjUtil {
 			}
 
 		}
-
-		return map;
+		
+		for (int i = 0; i < list.size(); i++) {
+			for (int j = 0; j < list.get(i).size(); j++) {
+				if(map.get(list.get(i).get(j)) != null) {
+				TjBean tjBean = new TjBean();
+				tjBean.setNumber(map.get(list.get(i).get(j)));
+				tjBean.setName(list.get(i).get(j));
+				resList.add(tjBean);	
+				}
+			}
+		}
+		
+		return resList;
 	}
 
 	/**
@@ -78,15 +89,17 @@ public class TjUtil {
 	public static ArrayList<String> getTemFile(ArrayList<String> list1, ArrayList<String> list2,
 			ArrayList<String> targetList) {
 		
-		for (int i = 1; i < list1.size()-1; i++) {
-			//list2不包含元素list1.get(i)
-			if(!list2.contains(list1.get(i))) {
-				targetList.remove(i);
+		ArrayList<String> list = new ArrayList<>();
+		
+		for (int i = 1; i < list1.size(); i++) {
+			//list2包含元素list1.get(i)
+			if(list2.contains(list1.get(i))) {
+				list.add(targetList.get(i));
 			}
 		}
 		
 
-		return targetList;
+		return list;
 	}
 
 }
