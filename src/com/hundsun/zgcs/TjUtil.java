@@ -29,9 +29,25 @@ public class TjUtil {
 	public static HashMap<String, Integer> getCount(ArrayList<String> column, ArrayList<ArrayList<String>> list) {
 
 		HashMap<String, Integer> map = new HashMap<>();
+		ArrayList<ArrayList<String>> resList = new ArrayList<>();
 		Boolean flag = false;
 		for (int i = 0; i < column.size(); i++) {
 			for (int j = 0; j < list.size(); j++) {
+
+				// 人员数据统计
+				for (int p = 0; p < list.get(j).size(); p++) {
+
+					// 判断人员是否在测试执行人里
+					if (column.get(i).indexOf(list.get(j).get(p)) != -1) {
+						// 判断键值是否存在
+						if (map.containsKey(list.get(j).get(p))) {
+							map.put(list.get(j).get(p), map.get(list.get(j).get(p)) + 1);
+						} else {
+							map.put(list.get(j).get(p), 1);
+						}
+						flag = true;
+					}
+				}
 				if (flag) {
 					// 小组数量统计
 					if (map.containsKey(list.get(j).get(0))) {
@@ -40,21 +56,6 @@ public class TjUtil {
 						map.put(list.get(j).get(0), 1);
 					}
 					flag = false;
-				}
-				
-				// 人员数据统计
-				for (int p = 0; p < list.get(j).size(); p++) {
-					
-					// 判断人员是否在测试执行人里
-					if (column.get(i).indexOf(list.get(j).get(p)) != -1) {
-						// 判断键值是否存在
-						if (map.containsKey(list.get(j).get(p))) {
-							map.put(list.get(j).get(p), map.get(list.get(j).get(p)) + 1);
-						} else {
-							map.put(list.get(j).get(p), 1);	
-						}
-						flag = true;
-					}
 				}
 
 			}
@@ -68,15 +69,24 @@ public class TjUtil {
 	 * 获取包含在列表一中的列表二的目标值的列
 	 * 
 	 * @param list1
-	 *            列表一
+	 *            列表一(大)
 	 * @param list2
-	 *            列表二
+	 *            列表二(小)
 	 * @param targetList
 	 * @return 结果列
 	 */
 	public static ArrayList<String> getTemFile(ArrayList<String> list1, ArrayList<String> list2,
 			ArrayList<String> targetList) {
-		return null;
+		
+		for (int i = 1; i < list1.size()-1; i++) {
+			//list2不包含元素list1.get(i)
+			if(!list2.contains(list1.get(i))) {
+				targetList.remove(i);
+			}
+		}
+		
+
+		return targetList;
 	}
 
 }
