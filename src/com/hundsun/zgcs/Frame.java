@@ -17,8 +17,6 @@ import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-
-
 public class Frame extends JFrame {
 
 	/**
@@ -31,9 +29,9 @@ public class Frame extends JFrame {
 	 * 数据字典存放的excel
 	 */
 	private File dictionary;
+	private File tagFile;
 	private JFileChooser fileChoose;
 	private File[] fileList;
-	private File tagFile;
 	private ArrayList<String> cloList = new ArrayList<>();
 
 	/**
@@ -59,9 +57,7 @@ public class Frame extends JFrame {
 	 */
 	public Frame() {
 
-		String str2 = "D:\\\\test\\\\testDic.xlsx";
-		String loc2 = str2.replace("\\\\", "/");
-		File dictionary = new File(loc2);
+		File dictionary = new File("./dictionary.xlsx");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 600, 450);
 		setTitle("Excel统计工具");
@@ -102,7 +98,7 @@ public class Frame extends JFrame {
 				int returnVal = fileChoose.showOpenDialog(Frame.this);
 				if (returnVal == fileChoose.APPROVE_OPTION) {
 					File[] fileList = fileChoose.getSelectedFiles();
-
+					tagFile = fileChoose.getSelectedFile();
 					for (File file : fileList) {
 						System.out.println(file.getName());
 						textPane.setText(file.getAbsolutePath());
@@ -139,15 +135,17 @@ public class Frame extends JFrame {
 				// 根据不通的统计模式调用不用的方法
 				switch (str) {
 				case "临时补丁遗漏统计":
-					// for (int i = 0; i < fileList.length; i++) {
+
 					ArrayList<String> list = ExcelUtil.getColumByName(tagFile, "测试执行人");
 					System.out.println("开始统计");
 					ArrayList<TjBean> beanList = TjUtil.getCount(list, ExcelUtil.getColumnList(dictionary));
 					long time = System.currentTimeMillis();
 					System.out.println("打印开始");
-					ExcelUtil.printExcel(beanList, "", loc2.toLowerCase(), cloList, str);
-					// }
-					System.out.println("打印结束" + loc2.toLowerCase());
+
+					ExcelUtil.printExcel(beanList, str + time, ".", cloList, str);
+					File test = new File( str + time + ".xlsx");
+
+					System.out.println("打印结束");
 					break;
 
 				case "缺陷类需求单统计":

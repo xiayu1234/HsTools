@@ -1,6 +1,7 @@
 package com.hundsun.zgcs;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -23,6 +24,13 @@ public class TestApp {
 		File file = new File(loc1);
 		File dic = new File(loc2);
 		File file1 = new File(loc3);
+		File test = new File(".");
+		try {
+			System.out.println(test.getCanonicalPath());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		ArrayList<String> list = ExcelUtil.getColumByName(file, "测试执行人");
 		ArrayList<String> QxList = ExcelUtil.getColumByName(file, "补丁单编号");

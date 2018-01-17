@@ -269,7 +269,7 @@ public class ExcelUtil {
 		}
 
 		try {
-			OutputStream out = new FileOutputStream(filePath + fileName);
+			OutputStream out = new FileOutputStream(filePath + fileName + ".xls");
 			workbook.write(out);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
