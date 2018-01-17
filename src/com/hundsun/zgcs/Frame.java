@@ -17,8 +17,7 @@ import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.sun.jmx.snmp.Timestamp;
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
+
 
 public class Frame extends JFrame {
 
@@ -95,23 +94,20 @@ public class Frame extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// 添加选择框
 				JFileChooser fileChoose = new JFileChooser();
-				fileChoose.showDialog(Frame.this, "确定");
 				fileChoose.setMultiSelectionEnabled(true);
 				// 过滤展示Excel格式的文件
 				FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel文件", "xls", "xlsx", "csv");
 				fileChoose.setFileFilter(filter);
 				int returnVal = fileChoose.showOpenDialog(Frame.this);
-				
-				fileList = fileChoose.getSelectedFiles();
-				tagFile = fileChoose.getSelectedFile();
-				System.out.println(tagFile.getName());
-				for (File file : fileList) {
-					System.out.println(file.getName());
-					textPane.setText(file.getAbsolutePath());
-				}
+				if (returnVal == fileChoose.APPROVE_OPTION) {
+					File[] fileList = fileChoose.getSelectedFiles();
 
+					for (File file : fileList) {
+						System.out.println(file.getName());
+						textPane.setText(file.getAbsolutePath());
+					}
+				}
 			}
 
 		});
