@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -15,6 +16,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import com.sun.jmx.snmp.Timestamp;
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 public class Frame extends JFrame {
 
@@ -29,6 +33,9 @@ public class Frame extends JFrame {
 	 */
 	private File dictionary;
 	private JFileChooser fileChoose;
+	private File[] fileList;
+	private File tagFile;
+	private ArrayList<String> cloList = new ArrayList<>();
 
 	/**
 	 * Launch the application.
@@ -52,6 +59,10 @@ public class Frame extends JFrame {
 	 * 创建一个Frame
 	 */
 	public Frame() {
+
+		String str2 = "D:\\\\test\\\\testDic.xlsx";
+		String loc2 = str2.replace("\\\\", "/");
+		File dictionary = new File(loc2);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 600, 450);
 		setTitle("Excel统计工具");
@@ -74,7 +85,7 @@ public class Frame extends JFrame {
 		JLabel label_2 = new JLabel("统计模式:");
 		label_2.setBounds(10, 170, 60, 20);
 		contentPane.add(label_2);
-		
+
 		JTextPane textPane = new JTextPane();
 		textPane.setBounds(80, 50, 390, 20);
 		contentPane.add(textPane);
@@ -86,17 +97,20 @@ public class Frame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// 添加选择框
 				JFileChooser fileChoose = new JFileChooser();
+				fileChoose.showDialog(Frame.this, "确定");
 				fileChoose.setMultiSelectionEnabled(true);
 				// 过滤展示Excel格式的文件
 				FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel文件", "xls", "xlsx", "csv");
 				fileChoose.setFileFilter(filter);
-				File[] fileList = fileChoose.getSelectedFiles();
-
+				int returnVal = fileChoose.showOpenDialog(Frame.this);
+				
+				fileList = fileChoose.getSelectedFiles();
+				tagFile = fileChoose.getSelectedFile();
+				System.out.println(tagFile.getName());
 				for (File file : fileList) {
 					System.out.println(file.getName());
 					textPane.setText(file.getAbsolutePath());
 				}
-				fileChoose.showDialog(Frame.this, "确定");
 
 			}
 
@@ -109,7 +123,7 @@ public class Frame extends JFrame {
 		jcb.setBounds(80, 170, 390, 20);
 		contentPane.add(jcb);
 		jcb.setVisible(true);
-	
+
 		JLabel stateLabel = new JLabel("");
 		stateLabel.setBounds(480, 170, 90, 20);
 		contentPane.add(stateLabel);
@@ -117,20 +131,27 @@ public class Frame extends JFrame {
 		JButton startBut = new JButton("开始统计");
 		startBut.setBounds(240, 320, 120, 30);
 		contentPane.add(startBut);
-		
-		
-		//点击统计按钮的监听事件
+
+		// 点击统计按钮的监听事件
 		startBut.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String str = (String) jcb.getSelectedItem();
-				
+				cloList.add("姓名");
+				cloList.add("数量");
 				// 根据不通的统计模式调用不用的方法
 				switch (str) {
 				case "临时补丁遗漏统计":
-					
-
+					// for (int i = 0; i < fileList.length; i++) {
+					ArrayList<String> list = ExcelUtil.getColumByName(tagFile, "测试执行人");
+					System.out.println("开始统计");
+					ArrayList<TjBean> beanList = TjUtil.getCount(list, ExcelUtil.getColumnList(dictionary));
+					long time = System.currentTimeMillis();
+					System.out.println("打印开始");
+					ExcelUtil.printExcel(beanList, "", loc2.toLowerCase(), cloList, str);
+					// }
+					System.out.println("打印结束" + loc2.toLowerCase());
 					break;
 
 				case "缺陷类需求单统计":

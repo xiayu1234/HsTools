@@ -48,7 +48,7 @@ public class TjUtil {
 						flag = true;
 					}
 				}
-				
+
 				if (flag) {
 					// 小组数量统计
 					if (map.containsKey(list.get(j).get(0))) {
