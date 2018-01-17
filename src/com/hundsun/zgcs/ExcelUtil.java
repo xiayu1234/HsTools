@@ -228,25 +228,30 @@ public class ExcelUtil {
 			cell.setCellStyle(style);
 			cell.setCellValue(columnNameList.get(i));
 		}
-		Field[] fields = TjBean.class.getFields();
 
-		for (int i = 1; i < list.size() + 1; i++) {
-			HSSFRow row = sheet.createRow(i);
-			for (int j = 0; j < fields.length; j++) {
+		for (int j = 1; j < list.size() + 1; j++) {
+			HSSFRow row = sheet.createRow(j);
+			bean = list.get(j-1);
+			Field[] fields = bean.getClass().getDeclaredFields();
+			for (int i = 0; i < fields.length; i++) {
 				HSSFCell cell = row.createCell(i);
 				cell.setCellStyle(style2);
-				Field field = fields[j];
+				Field field = fields[i];
 				String fieldName = field.getName();
-				// 拼接get方法的方法名
-				String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+				// 获取get方法
+				String methodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+				System.out.println(methodName);
+				Class clsBean = bean.getClass();
 				try {
-					Method getMethod = bean.getClass().getMethod(getMethodName, new Class[] {});
-					Object value = getMethod.invoke(bean, new Object[] {});
-					if(value != null) {
-						String str = value.toString();
-						cell.setCellValue(str);
+					Method getMethod = clsBean.getMethod(methodName, new Class[] {});
+					Object obj = getMethod.invoke(bean, new Object [] {});
+					if(obj != null) {
+						cell.setCellValue(obj.toString());
 					}
-				} catch (NoSuchMethodException | SecurityException e) {
+				} catch (NoSuchMethodException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SecurityException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {
@@ -259,9 +264,10 @@ public class ExcelUtil {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+
 			}
 		}
-		
+
 		try {
 			OutputStream out = new FileOutputStream(filePath + fileName);
 			workbook.write(out);

@@ -8,23 +8,19 @@ package com.hundsun.zgcs;
  */
 public class TjBean {
 
-	public int number;
-
 	public String name;
+
+	public int number = 0;
 
 	public TjBean() {
 		// TODO Auto-generated constructor stub
 	}
-	
-	
 
 	public TjBean(int number, String name) {
 		super();
 		this.number = number;
 		this.name = name;
 	}
-
-
 
 	public int getNumber() {
 		return number;

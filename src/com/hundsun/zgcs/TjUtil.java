@@ -48,6 +48,7 @@ public class TjUtil {
 						flag = true;
 					}
 				}
+				
 				if (flag) {
 					// 小组数量统计
 					if (map.containsKey(list.get(j).get(0))) {
@@ -61,18 +62,18 @@ public class TjUtil {
 			}
 
 		}
-		
+
 		for (int i = 0; i < list.size(); i++) {
 			for (int j = 0; j < list.get(i).size(); j++) {
-				if(map.get(list.get(i).get(j)) != null) {
-				TjBean tjBean = new TjBean();
-				tjBean.setNumber(map.get(list.get(i).get(j)));
-				tjBean.setName(list.get(i).get(j));
-				resList.add(tjBean);	
+				if (map.get(list.get(i).get(j)) != null) {
+					TjBean tjBean = new TjBean();
+					tjBean.setNumber(map.get(list.get(i).get(j)));
+					tjBean.setName(list.get(i).get(j));
+					resList.add(tjBean);
 				}
 			}
 		}
-		
+
 		return resList;
 	}
 
@@ -88,16 +89,15 @@ public class TjUtil {
 	 */
 	public static ArrayList<String> getTemFile(ArrayList<String> list1, ArrayList<String> list2,
 			ArrayList<String> targetList) {
-		
+
 		ArrayList<String> list = new ArrayList<>();
-		
+
 		for (int i = 1; i < list1.size(); i++) {
-			//list2包含元素list1.get(i)
-			if(list2.contains(list1.get(i))) {
+			// list2包含元素list1.get(i)
+			if (list2.contains(list1.get(i))) {
 				list.add(targetList.get(i));
 			}
 		}
-		
 
 		return list;
 	}

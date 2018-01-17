@@ -14,7 +14,7 @@ public class TestApp {
 
 		String str = "D:\\\\test\\\\testFile.xls";
 		String str2 = "D:\\\\test\\\\testDic.xlsx";
-		String str3 = "D:\\\\test\\\\testFile2.xls";
+		String str3 = "D:\\\\test\\\\testFile3.xls";
 		String str4 = "D:\\\\test\\\\";
 		String loc1 = str.replace("\\\\", "/");
 		String loc2 = str2.replace("\\\\", "/");
@@ -26,22 +26,21 @@ public class TestApp {
 
 		ArrayList<String> list = ExcelUtil.getColumByName(file, "测试执行人");
 		ArrayList<String> QxList = ExcelUtil.getColumByName(file, "补丁单编号");
-		ArrayList<String> BdList = ExcelUtil.getColumByName(file1, "补丁编号");
+		//ArrayList<String> BdList = ExcelUtil.getColumByName(file1, "补丁编号");
 
-		ArrayList<String> tempList = TjUtil.getTemFile(QxList, BdList, list);
+		//ArrayList<String> tempList = TjUtil.getTemFile(QxList, BdList, list);
 
 		ArrayList<ArrayList<String>> dicList = ExcelUtil.getColumnList(dic);
 
 		ArrayList<TjBean> resList = TjUtil.getCount(list, dicList);
-		System.out.println(resList.size());
-		ArrayList<String> list2 = new ArrayList<>();
-		list.add("姓名");
-		list.add("数量");
-		ExcelUtil.printExcel(resList, "统计结果", loc4, list2, "统计结果");
-
 		for (TjBean tjBean : resList) {
 			System.out.println(tjBean.getName() + ":" + tjBean.getNumber());
 		}
+		
+		ArrayList<String> list2 = new ArrayList<>();
+		list2.add("姓名");
+		list2.add("数量");
+		ExcelUtil.printExcel(resList, "", loc3, list2, "统计数量");
 
 	}
 
