@@ -123,7 +123,7 @@ public class ExcelUtil {
 		Row row = sheet.getRow(0);
 		// 获取列数
 		int colNum = row.getPhysicalNumberOfCells();
-		int num = 0;
+
 		for (int j = 0; j < colNum; j++) {
 			ArrayList<String> cellList = new ArrayList<>();
 			cellList.clear();
@@ -231,7 +231,7 @@ public class ExcelUtil {
 
 		for (int j = 1; j < list.size() + 1; j++) {
 			HSSFRow row = sheet.createRow(j);
-			bean = list.get(j-1);
+			bean = list.get(j - 1);
 			Field[] fields = bean.getClass().getDeclaredFields();
 			for (int i = 0; i < fields.length; i++) {
 				HSSFCell cell = row.createCell(i);
@@ -244,8 +244,8 @@ public class ExcelUtil {
 				Class clsBean = bean.getClass();
 				try {
 					Method getMethod = clsBean.getMethod(methodName, new Class[] {});
-					Object obj = getMethod.invoke(bean, new Object [] {});
-					if(obj != null) {
+					Object obj = getMethod.invoke(bean, new Object[] {});
+					if (obj != null) {
 						cell.setCellValue(obj.toString());
 					}
 				} catch (NoSuchMethodException e) {
@@ -271,6 +271,7 @@ public class ExcelUtil {
 		try {
 			OutputStream out = new FileOutputStream(filePath + fileName + ".xls");
 			workbook.write(out);
+			out.flush();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
