@@ -94,9 +94,12 @@ public class TjUtil {
 
 		for (int i = 1; i < list1.size(); i++) {
 			// list2包含元素list1.get(i)
-			if (list2.contains(list1.get(i))) {
-				list.add(targetList.get(i));
+			for (int j = 0; j < list2.size(); j++) {
+				if (list1.get(i).indexOf(list2.get(j)) != -1) {
+					list.add(targetList.get(i));
+				}
 			}
+
 		}
 
 		return list;

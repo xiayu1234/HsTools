@@ -127,8 +127,12 @@ public class Frame extends JFrame {
 		contentPane.add(textPane2);
 
 		JButton startBut = new JButton("开始统计");
-		startBut.setBounds(240, 320, 110, 30);
+		startBut.setBounds(240, 340, 110, 30);
 		contentPane.add(startBut);
+		
+		JPanel logPanel = new JPanel();
+		logPanel.setBounds(20, 210, 550, 120);
+		contentPane.add(logPanel);
 		// 需要显示的列
 		cloList.add("姓名");
 		cloList.add("数量");
