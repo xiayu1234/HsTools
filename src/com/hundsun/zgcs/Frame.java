@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -16,6 +17,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Frame extends JFrame {
 
@@ -33,6 +37,8 @@ public class Frame extends JFrame {
 	// 修改单Excel文件
 	private File file2;
 	private ArrayList<String> cloList = new ArrayList<>();
+
+	public static Logger log = LogManager.getLogger(Frame.class);
 
 	/**
 	 * Launch the application.
@@ -57,7 +63,8 @@ public class Frame extends JFrame {
 	 */
 	public Frame() {
 
-		File dictionary = new File("./dictionary.xlsx");
+		File dictionary = new File("dictionary.xlsx");
+		log.info("数据字典的路径" + dictionary.getAbsolutePath());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 600, 450);
 		setTitle("Excel统计工具");
@@ -100,7 +107,7 @@ public class Frame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fileChoose = new JFileChooser();
 				// 过滤展示Excel格式的文件
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel文件", "xls", "xlsx", "csv");
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel文件", "xls", "xlsx");
 				fileChoose.setFileFilter(filter);
 				int returnVal = fileChoose.showOpenDialog(Frame.this);
 				if (returnVal == fileChoose.APPROVE_OPTION) {
@@ -108,6 +115,7 @@ public class Frame extends JFrame {
 
 					System.out.println(file1.getName());
 					textPane1.setText(file1.getAbsolutePath());
+					log.debug("需求列表的路径：" + file1.getAbsolutePath());
 
 				}
 			}
@@ -129,7 +137,7 @@ public class Frame extends JFrame {
 		JButton startBut = new JButton("开始统计");
 		startBut.setBounds(240, 340, 110, 30);
 		contentPane.add(startBut);
-		
+
 		JPanel logPanel = new JPanel();
 		logPanel.setBounds(20, 210, 550, 120);
 		contentPane.add(logPanel);
@@ -152,7 +160,7 @@ public class Frame extends JFrame {
 
 					System.out.println(file2.getName());
 					textPane2.setText(file2.getAbsolutePath());
-
+					log.debug("修改单列表的路径：" + file2.getAbsolutePath());
 				}
 			}
 
@@ -167,6 +175,7 @@ public class Frame extends JFrame {
 				String str = (String) jcb.getSelectedItem();
 				switch (str) {
 				case "临时补丁遗漏统计":
+
 					button1.setVisible(false);
 					label_1.setVisible(false);
 					textPane1.setVisible(false);
@@ -174,21 +183,20 @@ public class Frame extends JFrame {
 
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							// TODO Auto-generated method stub
+							log.info("临时补丁遗漏统计开始");
+							log.debug("获取列名为测试执行人的列");
 							ArrayList<String> list = ExcelUtil.getColumByName(file2, "测试执行人");
-							System.out.println("开始统计");
+							log.debug("调用统计数量的方法");
 							ArrayList<TjBean> beanList = TjUtil.getCount(list, ExcelUtil.getColumnList(dictionary));
 							long time = System.currentTimeMillis();
-							System.out.println("开始打印Excel");
+							log.info("开始打印Excel文件");
 
+							log.info("导出文件的名称" + str + time);
 							ExcelUtil.printExcel(beanList, str + time, "", cloList, str);
-							File test = new File(str + time + ".xlsx");
-							System.out.println(test);
-							System.out.println("Excel结束打印");
+
+							log.info("Excel打印结束");
 						}
 					});
-
-					System.out.println("临时补丁遗漏统计");
 
 					break;
 
@@ -196,7 +204,7 @@ public class Frame extends JFrame {
 					button1.setVisible(true);
 					label_1.setVisible(true);
 					textPane1.setVisible(true);
-					System.out.println("缺陷类需求单统计");
+					log.info("缺陷类需求单统计");
 					startBut.addActionListener(new ActionListener() {
 
 						@Override
@@ -204,17 +212,20 @@ public class Frame extends JFrame {
 							// TODO Auto-generated method stub
 							ArrayList<String> list1 = ExcelUtil.getColumByName(file1, "需求编号");
 							ArrayList<String> list2 = ExcelUtil.getColumByName(file2, "需求编号");
+							log.debug("列名为测试执行人的列");
 							ArrayList<String> targetList = ExcelUtil.getColumByName(file2, "测试执行人");
+							log.debug("获取缺陷类需求的修改单的测试测试执行人列");
 							ArrayList<String> list = TjUtil.getTemFile(list1, list2, targetList);
-							System.out.println("开始统计");
+							log.debug("缺陷类需求的修改单数量：" + list.size());
+							log.debug("调用统计数量的方法");
 							ArrayList<TjBean> beanList = TjUtil.getCount(list, ExcelUtil.getColumnList(dictionary));
 							long time = System.currentTimeMillis();
-							System.out.println("开始打印Excel");
 
+							log.info("开始导出统计结果的excel");
+							log.info("导出文件的名称" + str + time);
 							ExcelUtil.printExcel(beanList, str + time, "", cloList, str);
-							File test = new File(str + time + ".xlsx");
-							System.out.println(test);
-							System.out.println("Excel结束打印");
+
+							log.debug("Excel打印结束");
 						}
 					});
 

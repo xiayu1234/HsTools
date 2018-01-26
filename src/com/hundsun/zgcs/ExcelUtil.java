@@ -15,6 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -31,6 +33,8 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExcelUtil {
+
+	public static Logger log = LogManager.getLogger(ExcelUtil.class);
 
 	public ExcelUtil() {
 		// TODO Auto-generated constructor stub
@@ -50,14 +54,16 @@ public class ExcelUtil {
 			stream = new FileInputStream(file);
 			String fileType = file.getName().substring(file.getName().lastIndexOf(".") + 1);
 			if (fileType.equals("xls")) {
+				log.debug("所选文件格式为xls，创建一个HSSFWorkbook对象");
 				workBook = new HSSFWorkbook(stream);
 			} else if (fileType.equals("xlsx")) {
+				log.debug("所选文件格式为xls，创建一个XSSFWorkbook对象");
 				workBook = new XSSFWorkbook(stream);
 			} else {
-				System.out.println("文件格式不正确");
+				log.info("所选择的文件格式不正确");
 			}
 		} catch (FileNotFoundException e) {
-			System.out.println("找不到对应的文件");
+			log.error("所选的文件不存在");
 			e.printStackTrace();
 		} catch (IOException e) {
 			System.out.println("文件读取异常");
@@ -82,6 +88,7 @@ public class ExcelUtil {
 			return cellValue;
 		} else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
 			cellValue = cell.getStringCellValue();
+
 		}
 
 		else if (cell.getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
@@ -119,11 +126,12 @@ public class ExcelUtil {
 		Sheet sheet = workBook.getSheetAt(0);
 		// 获取行数
 		int rowNum = sheet.getLastRowNum() + 1;
+		log.info(file.getName()+"行数为：" + rowNum);
 
 		Row row = sheet.getRow(0);
 		// 获取列数
 		int colNum = row.getPhysicalNumberOfCells();
-
+		log.info(file.getName() + "列数为：" + colNum);
 		for (int j = 0; j < colNum; j++) {
 			ArrayList<String> cellList = new ArrayList<>();
 			cellList.clear();
@@ -149,7 +157,7 @@ public class ExcelUtil {
 	 * @return 列
 	 */
 	public static ArrayList<String> getColumByName(File file, String name) {
-
+		log.info("获取列名为" + name + "的列");
 		ArrayList<ArrayList<String>> columList = getColumnList(file);
 		ArrayList<String> list = null;
 		for (ArrayList<String> arrayList : columList) {
@@ -158,6 +166,7 @@ public class ExcelUtil {
 				break;
 			}
 		}
+		log.info(name + "列的行数：" + list.size());
 		return list;
 
 	}
@@ -179,7 +188,7 @@ public class ExcelUtil {
 	 */
 	public static void printExcel(ArrayList<TjBean> list, String fileName, String filePath,
 			ArrayList<String> columnNameList, String title) {
-		//
+		
 		TjBean bean = new TjBean();
 		// 声明一个工作薄
 		HSSFWorkbook workbook = new HSSFWorkbook();
@@ -240,7 +249,7 @@ public class ExcelUtil {
 				String fieldName = field.getName();
 				// 获取get方法
 				String methodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-				System.out.println(methodName);
+				//System.out.println(methodName);
 				Class clsBean = bean.getClass();
 				try {
 					Method getMethod = clsBean.getMethod(methodName, new Class[] {});
@@ -249,16 +258,13 @@ public class ExcelUtil {
 						cell.setCellValue(obj.toString());
 					}
 				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
+					log.error("反射机制找不到对应的方法名");
 					e.printStackTrace();
 				} catch (SecurityException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
+					log.error("访问TjBean类、字段、方法异常");
 					e.printStackTrace();
 				} catch (InvocationTargetException e) {
 					// TODO Auto-generated catch block
@@ -273,10 +279,10 @@ public class ExcelUtil {
 			workbook.write(out);
 			out.flush();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			log.error("找不到输出的文件对象");
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			log.error("输出excel的IO流异常");
 			e.printStackTrace();
 		}
 

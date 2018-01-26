@@ -9,5 +9,8 @@
 	<classpathentry kind="lib" path="poi_jar/poi-ooxml-schemas-3.15-beta1.jar"/>
 	<classpathentry kind="lib" path="poi_jar/poi-scratchpad-3.15-beta1.jar"/>
 	<classpathentry kind="lib" path="poi_jar/xmlbeans-2.6.0.jar"/>
+	<classpathentry kind="lib" path="log4j_jar/log4j-api-2.10.0.jar"/>
+	<classpathentry kind="lib" path="log4j_jar/log4j-core-2.10.0-tests.jar"/>
+	<classpathentry kind="lib" path="log4j_jar/log4j-core-2.10.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

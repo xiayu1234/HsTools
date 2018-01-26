@@ -3,8 +3,6 @@ package com.hundsun.zgcs;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.sun.media.sound.SoftMixingSourceDataLine;
-
 /**
  * 工具类
  * 
@@ -89,7 +87,7 @@ public class TjUtil {
 	 */
 	public static ArrayList<String> getTemFile(ArrayList<String> list1, ArrayList<String> list2,
 			ArrayList<String> targetList) {
-
+		
 		ArrayList<String> list = new ArrayList<>();
 
 		for (int i = 1; i < list1.size(); i++) {
