@@ -190,7 +190,8 @@ public class ExcelUtil {
 		if (type == "补丁") {
 			for (int i = 0; i < keyList.size(); i++) {
 				for (int j = i + 1; j < keyList.size(); j++) {
-					if (keyList.get(i).substring(0, 11).equals(keyList.get(j).substring(0, 11))) {
+					if (keyList.get(i).length() > 11
+							&& keyList.get(i).substring(0, 10).equals(keyList.get(j).substring(0, 10))) {
 						keyList.remove(i);
 						valueList.remove(i);
 						i--;
@@ -293,10 +294,12 @@ public class ExcelUtil {
 				HSSFCell cell = row.createCell(i);
 				cell.setCellStyle(style2);
 				Field field = fields[i];
+
 				String fieldName = field.getName();
+				log.debug("字段名:" + fieldName);
 				// 获取get方法
 				String methodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-				// System.out.println(methodName);
+				log.debug("方法名:" + methodName);
 				Class clsBean = bean.getClass();
 				try {
 					Method getMethod = clsBean.getMethod(methodName, new Class[] {});

@@ -105,7 +105,8 @@ public class TjUtil {
 			for (int j = 0; j < xqList.size(); j++) {
 				if (xgList.get(i).indexOf(xqList.get(j)) != -1) {
 					list.add(targetList.get(i));
-					//log.debug("需求编号：" + xqList.get(j) + "    测试执行人" + targetList.get(i));
+					log.debug("需求编号:" + xqList.get(j) );
+					log.debug("测试执行人:"+  targetList.get(i));
 				}
 			}
 

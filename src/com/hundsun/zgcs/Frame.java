@@ -196,9 +196,11 @@ public class Frame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				ArrayList<String> xqList = ExcelUtil.getColumByName(file1, "需求编号");
-				ArrayList<String> xgList = ExcelUtil.getColumByName(file2, "需求编号");
-				ArrayList<String> targetList = ExcelUtil.getColumByName(file2, "测试执行人");
-				
+				ArrayList<String> keyList = ExcelUtil.getColumByName(file2, "需求编号");
+				ArrayList<String> valueList = ExcelUtil.getColumByName(file2, "测试执行人");
+				//对修改单根据需求编号去重
+				ArrayList<String> xgList = ExcelUtil.removal(keyList, valueList, "需求").get(0);
+				ArrayList<String> targetList =  ExcelUtil.removal(keyList, valueList, "需求").get(1);
 				log.debug("获取缺陷类需求的修改单的测试执行人列");
 				ArrayList<String> list = TjUtil.getTemFile(xgList, xqList, targetList);
 				log.debug("缺陷类需求的修改单数量：" + list.size());
