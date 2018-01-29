@@ -15,8 +15,7 @@ import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
  *
  */
 public class TjUtil {
-	
-	
+
 	public static Logger log = LogManager.getLogger(TjUtil.class);
 
 	public TjUtil() {
@@ -86,33 +85,34 @@ public class TjUtil {
 	/**
 	 * 获取包含在列表一中的列表二的目标值的列
 	 * 
-	 * @param list1
-	 *            列表一(大)
-	 * @param list2
-	 *            列表二(小)
-	 * @param targetList
+	 * @param xgList
+	 *            修改单的需求列表
+	 * @param xqList
+	 *            需求单的需求列表
+	 * @param targetList 
+	 * 			  修改单的测试执行人列
 	 * @return 结果列
 	 */
-	public static ArrayList<String> getTemFile(ArrayList<String> list1, ArrayList<String> list2,
+	public static ArrayList<String> getTemFile(ArrayList<String> xgList, ArrayList<String> xqList,
 			ArrayList<String> targetList) {
-		
-		ArrayList<String> list = new ArrayList<>();
 
-		for (int i = 1; i < list1.size(); i++) {
-			// list2包含元素list1.get(i)
-			for (int j = 0; j < list2.size(); j++) {
-				if (list2.get(j).indexOf(list1.get(i)) != -1) {
+		ArrayList<String> list = new ArrayList<>();
+		log.debug("修改单需求列表长度：  " + xgList.size());
+		log.debug("修改单测试执行人列表长度：  " + targetList.size());
+		log.debug("需求单需求列表长度：  " + xqList.size());
+		for (int i = 1; i < xgList.size(); i++) {
+			// xqList包含元素xgList.get(i)
+			for (int j = 0; j < xqList.size(); j++) {
+				if (xgList.get(i).indexOf(xqList.get(j)) != -1) {
 					list.add(targetList.get(i));
-					log.debug("需求编号：" + list2.get(j) + "    测试执行人" + targetList.get(j));
+					//log.debug("需求编号：" + xqList.get(j) + "    测试执行人" + targetList.get(i));
 				}
 			}
 
 		}
 		System.out.println(list.size());
 		return list;
-		
-	}
-	
 
+	}
 
 }

@@ -177,24 +177,42 @@ public class ExcelUtil {
 	 * 原始数据去重
 	 * 
 	 * @param keyList
+	 *            key集合（判断是否重复的依据）
 	 * @param valueList
-	 * @return
+	 *            value集合
+	 * @return list list.get(0) 去重后的keyList list.get(1) 去重后的valueList
+	 * 
 	 */
-	public static ArrayList<String> removal(ArrayList<String> keyList, ArrayList<String> valueList, String type) {
+	public static ArrayList<ArrayList<String>> removal(ArrayList<String> keyList, ArrayList<String> valueList,
+			String type) {
 
-		HashMap<String, String> map = new HashMap<>();
-		ArrayList<String> list = new ArrayList<>();
+		ArrayList<ArrayList<String>> list = new ArrayList<>();
 		if (type == "补丁") {
 			for (int i = 0; i < keyList.size(); i++) {
-				map.put(keyList.get(i).substring(0, 10), valueList.get(i));
+				for (int j = i + 1; j < keyList.size(); j++) {
+					if (keyList.get(i).substring(0, 11).equals(keyList.get(j).substring(0, 11))) {
+						keyList.remove(i);
+						valueList.remove(i);
+						i--;
+						break;
+					}
+				}
 			}
 		} else if (type == "需求") {
 			for (int i = 0; i < keyList.size(); i++) {
-				map.put(keyList.get(i), valueList.get(i));
+				for (int j = i + 1; j < keyList.size(); j++) {
+					if (keyList.get(i).equals(keyList.get(j))) {
+						keyList.remove(i);
+						valueList.remove(i);
+						i--;
+						break;
+					}
+				}
 			}
 		}
 
-		list.addAll(map.values());
+		list.add(0, keyList);
+		list.add(1, valueList);
 		log.debug("重复数据的条数" + (keyList.size() - list.size()));
 		return list;
 
@@ -304,9 +322,8 @@ public class ExcelUtil {
 		}
 
 		try {
-			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String date = df.toString();
-			OutputStream out = new FileOutputStream(filePath + fileName + date + ".xls");
+
+			OutputStream out = new FileOutputStream(filePath + fileName + ".xls");
 			workbook.write(out);
 			out.flush();
 			out.close();

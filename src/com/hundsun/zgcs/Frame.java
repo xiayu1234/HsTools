@@ -5,7 +5,6 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -93,7 +92,7 @@ public class Frame extends JFrame {
 		button1.setBounds(480, 170, 90, 20);
 		contentPane.add(button1);
 
-		JLabel label_1 = new JLabel("需求Excel:");
+		JLabel label_1 = new JLabel("需求单:");
 		label_1.setBounds(10, 170, 60, 20);
 		contentPane.add(label_1);
 
@@ -126,7 +125,7 @@ public class Frame extends JFrame {
 		button2.setBounds(480, 110, 90, 20);
 		contentPane.add(button2);
 
-		JLabel label_2 = new JLabel("修改Excel:");
+		JLabel label_2 = new JLabel("修改单:");
 		label_2.setBounds(10, 110, 60, 20);
 		contentPane.add(label_2);
 
@@ -165,7 +164,58 @@ public class Frame extends JFrame {
 			}
 
 		});
+		
+		//补丁统计监听
+		ActionListener bdTjLister  = new ActionListener() {
 
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				log.info("临时补丁遗漏统计开始");
+				log.debug("获取列名为测试执行人的列");
+				ArrayList<String> keyList = ExcelUtil.getColumByName(file2, "补丁编号");
+				ArrayList<String> valueList = ExcelUtil.getColumByName(file2, "测试执行人");
+				//根据缺陷编号对原始数据去重
+				ArrayList<String> list = ExcelUtil.removal(keyList, valueList, "补丁").get(1);
+				log.debug("调用统计数量的方法");
+				ArrayList<TjBean> beanList = TjUtil.getCount(list, ExcelUtil.getColumnList(dictionary));
+				long time = System.currentTimeMillis();
+				log.info("开始打印Excel文件");
+
+				log.info("导出文件的名称:" + jcb.getSelectedItem() + time);
+				ExcelUtil.printExcel(beanList, (String)jcb.getSelectedItem() + time, "", cloList, (String)jcb.getSelectedItem());
+
+				log.info("Excel打印结束");	
+				
+			}	
+		};
+		
+		//需求统计监听
+		ActionListener xqTjLister  = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				ArrayList<String> xqList = ExcelUtil.getColumByName(file1, "需求编号");
+				ArrayList<String> xgList = ExcelUtil.getColumByName(file2, "需求编号");
+				ArrayList<String> targetList = ExcelUtil.getColumByName(file2, "测试执行人");
+				
+				log.debug("获取缺陷类需求的修改单的测试执行人列");
+				ArrayList<String> list = TjUtil.getTemFile(xgList, xqList, targetList);
+				log.debug("缺陷类需求的修改单数量：" + list.size());
+				log.debug("调用统计数量的方法");
+				ArrayList<TjBean> beanList = TjUtil.getCount(list, ExcelUtil.getColumnList(dictionary));
+				long time = System.currentTimeMillis();
+
+				log.info("开始导出统计结果的excel");
+				log.info("导出文件的名称:" + jcb.getSelectedItem() + time);
+				ExcelUtil.printExcel(beanList, (String)jcb.getSelectedItem() + time, "", cloList, (String)jcb.getSelectedItem());
+				log.info("Excel打印结束");				
+			}
+			
+		};
+		
+		startBut.addActionListener(xqTjLister);
+		
 		// 下拉框添加事件
 		jcb.addActionListener(new ActionListener() {
 
@@ -179,56 +229,26 @@ public class Frame extends JFrame {
 					button1.setVisible(false);
 					label_1.setVisible(false);
 					textPane1.setVisible(false);
-					startBut.addActionListener(new ActionListener() {
-
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							log.info("临时补丁遗漏统计开始");
-							log.debug("获取列名为测试执行人的列");
-							ArrayList<String> list = ExcelUtil.getColumByName(file2, "测试执行人");
-							log.debug("调用统计数量的方法");
-							ArrayList<TjBean> beanList = TjUtil.getCount(list, ExcelUtil.getColumnList(dictionary));
-							long time = System.currentTimeMillis();
-							log.info("开始打印Excel文件");
-
-							log.info("导出文件的名称" + str + time);
-							ExcelUtil.printExcel(beanList, str + time, "", cloList, str);
-
-							log.info("Excel打印结束");
-						}
-					});
-
+					log.info("统计模式为:" + jcb.getSelectedItem());
+					log.debug("删除开始统计按钮统计缺陷类需求的监听事件");
+					startBut.removeActionListener(xqTjLister);
+					log.debug(startBut.getActionListeners().length);
+					if(startBut.getActionListeners().length == 0) {
+					startBut.addActionListener(bdTjLister);
+					}
 					break;
 
 				case "缺陷类需求单统计":
 					button1.setVisible(true);
 					label_1.setVisible(true);
 					textPane1.setVisible(true);
-					log.info("缺陷类需求单统计");
-					startBut.addActionListener(new ActionListener() {
-
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							// TODO Auto-generated method stub
-							ArrayList<String> list1 = ExcelUtil.getColumByName(file1, "需求编号");
-							ArrayList<String> list2 = ExcelUtil.getColumByName(file2, "需求编号");
-							log.debug("列名为测试执行人的列");
-							ArrayList<String> targetList = ExcelUtil.getColumByName(file2, "测试执行人");
-							log.debug("获取缺陷类需求的修改单的测试测试执行人列");
-							ArrayList<String> list = TjUtil.getTemFile(list1, list2, targetList);
-							log.debug("缺陷类需求的修改单数量：" + list.size());
-							log.debug("调用统计数量的方法");
-							ArrayList<TjBean> beanList = TjUtil.getCount(list, ExcelUtil.getColumnList(dictionary));
-							long time = System.currentTimeMillis();
-
-							log.info("开始导出统计结果的excel");
-							log.info("导出文件的名称" + str + time);
-							ExcelUtil.printExcel(beanList, str + time, "", cloList, str);
-
-							log.debug("Excel打印结束");
-						}
-					});
-
+					log.info("统计模式为:" + jcb.getSelectedItem());
+					log.debug("删除开始统计按钮统计补丁数量的监听事件");
+					startBut.removeActionListener(bdTjLister);
+					log.debug(startBut.getActionListeners().length);
+					if(startBut.getActionListeners().length == 0) {
+						startBut.addActionListener(xqTjLister);
+					}
 					break;
 				}
 
