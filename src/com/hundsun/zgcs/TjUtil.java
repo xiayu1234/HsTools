@@ -3,6 +3,11 @@ package com.hundsun.zgcs;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
+
 /**
  * 工具类
  * 
@@ -10,6 +15,9 @@ import java.util.HashMap;
  *
  */
 public class TjUtil {
+	
+	
+	public static Logger log = LogManager.getLogger(TjUtil.class);
 
 	public TjUtil() {
 		// TODO Auto-generated constructor stub
@@ -93,14 +101,18 @@ public class TjUtil {
 		for (int i = 1; i < list1.size(); i++) {
 			// list2包含元素list1.get(i)
 			for (int j = 0; j < list2.size(); j++) {
-				if (list1.get(i).indexOf(list2.get(j)) != -1) {
+				if (list2.get(j).indexOf(list1.get(i)) != -1) {
 					list.add(targetList.get(i));
+					log.debug("需求编号：" + list2.get(j) + "    测试执行人" + targetList.get(j));
 				}
 			}
 
 		}
-
+		System.out.println(list.size());
 		return list;
+		
 	}
+	
+
 
 }

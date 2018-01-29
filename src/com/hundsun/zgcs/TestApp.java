@@ -1,13 +1,10 @@
 package com.hundsun.zgcs;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 public class TestApp {
 
@@ -17,14 +14,20 @@ public class TestApp {
 
 	public static Logger log = LogManager.getLogger(TestApp.class);
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024);
-		PrintStream printStream = new PrintStream(outputStream);
-		PrintStream stream = System.out;
-		PrintStream stream1 = System.err;
-		System.setErr(printStream);
-		System.setOut(printStream);
+		ArrayList<String> keyList = new ArrayList<>();
+		ArrayList<String> valueList = new ArrayList<>();
+		keyList.add(0, "S0000006705");
+		keyList.add(1, "S0000006705-1");
+		valueList.add(0, "夏雨");
+		valueList.add(1, "xia雨");
+		ArrayList<String> list = ExcelUtil.removal(keyList, valueList,"补丁");
+		System.out.println(list.size());
+		for (int i = 0; i < list.size(); i++) {
+			System.out.println(list.get(i));
+		}
+		/**
 		String str = "D:\\\\test\\\\testFile.xls";
 		log.debug("获取str的路径");
 		String str2 = "D:\\\\test\\\\testDic.xlsx";
@@ -35,7 +38,7 @@ public class TestApp {
 		File file = new File(loc1);
 		File dic = new File(loc2);
 		File file1 = new File(loc3);
-		
+
 		ArrayList<String> list = ExcelUtil.getColumByName(file, "测试执行人");
 		ArrayList<String> qxList = ExcelUtil.getColumByName(file, "补丁单编号");
 		ArrayList<String> bdList = ExcelUtil.getColumByName(file1, "补丁编号");
@@ -60,11 +63,7 @@ public class TestApp {
 		ExcelUtil.printExcel(resList, System.currentTimeMillis() + " ", "", list2, "统计数量");
 		System.out.println("打印结束");
 		System.out.println(file.getParent());
-		String message = outputStream.toString();
-		System.setOut(stream);
-		System.setErr(stream1);
-		System.out.println("测试" + message);
-
+		*/
 	}
 
 }

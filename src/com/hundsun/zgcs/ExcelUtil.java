@@ -14,6 +14,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -66,7 +68,7 @@ public class ExcelUtil {
 			log.error("所选的文件不存在");
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println("文件读取异常");
+			log.error("文件读取异常");
 			e.printStackTrace();
 		}
 
@@ -126,7 +128,7 @@ public class ExcelUtil {
 		Sheet sheet = workBook.getSheetAt(0);
 		// 获取行数
 		int rowNum = sheet.getLastRowNum() + 1;
-		log.info(file.getName()+"行数为：" + rowNum);
+		log.info(file.getName() + "行数为：" + rowNum);
 
 		Row row = sheet.getRow(0);
 		// 获取列数
@@ -159,7 +161,7 @@ public class ExcelUtil {
 	public static ArrayList<String> getColumByName(File file, String name) {
 		log.info("获取列名为" + name + "的列");
 		ArrayList<ArrayList<String>> columList = getColumnList(file);
-		ArrayList<String> list = null;
+		ArrayList<String> list = new ArrayList<>();
 		for (ArrayList<String> arrayList : columList) {
 			if (arrayList.get(0).equals(name)) {
 				list = arrayList;
@@ -167,6 +169,33 @@ public class ExcelUtil {
 			}
 		}
 		log.info(name + "列的行数：" + list.size());
+		return list;
+
+	}
+
+	/**
+	 * 原始数据去重
+	 * 
+	 * @param keyList
+	 * @param valueList
+	 * @return
+	 */
+	public static ArrayList<String> removal(ArrayList<String> keyList, ArrayList<String> valueList, String type) {
+
+		HashMap<String, String> map = new HashMap<>();
+		ArrayList<String> list = new ArrayList<>();
+		if (type == "补丁") {
+			for (int i = 0; i < keyList.size(); i++) {
+				map.put(keyList.get(i).substring(0, 10), valueList.get(i));
+			}
+		} else if (type == "需求") {
+			for (int i = 0; i < keyList.size(); i++) {
+				map.put(keyList.get(i), valueList.get(i));
+			}
+		}
+
+		list.addAll(map.values());
+		log.debug("重复数据的条数" + (keyList.size() - list.size()));
 		return list;
 
 	}
@@ -188,7 +217,7 @@ public class ExcelUtil {
 	 */
 	public static void printExcel(ArrayList<TjBean> list, String fileName, String filePath,
 			ArrayList<String> columnNameList, String title) {
-		
+
 		TjBean bean = new TjBean();
 		// 声明一个工作薄
 		HSSFWorkbook workbook = new HSSFWorkbook();
@@ -249,7 +278,7 @@ public class ExcelUtil {
 				String fieldName = field.getName();
 				// 获取get方法
 				String methodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-				//System.out.println(methodName);
+				// System.out.println(methodName);
 				Class clsBean = bean.getClass();
 				try {
 					Method getMethod = clsBean.getMethod(methodName, new Class[] {});
@@ -275,9 +304,12 @@ public class ExcelUtil {
 		}
 
 		try {
-			OutputStream out = new FileOutputStream(filePath + fileName + ".xls");
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String date = df.toString();
+			OutputStream out = new FileOutputStream(filePath + fileName + date + ".xls");
 			workbook.write(out);
 			out.flush();
+			out.close();
 		} catch (FileNotFoundException e) {
 			log.error("找不到输出的文件对象");
 			e.printStackTrace();
