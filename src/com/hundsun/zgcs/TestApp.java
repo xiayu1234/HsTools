@@ -17,17 +17,24 @@ public class TestApp {
 
 		ArrayList<String> keyList = new ArrayList<>();
 		ArrayList<String> valueList = new ArrayList<>();
+		ArrayList<String> verList = new ArrayList<>();
 		keyList.add(0, "S0000006705");
-		keyList.add(1, "S0000006705-1");
-		keyList.add(2, "S0000006707-1");
-		keyList.add(3, "S0000006708-1");
-		valueList.add(0, "5");
-		valueList.add(1, "5");
-		valueList.add(2, "7");
-		valueList.add(3, "8");
+		keyList.add(1, "S0000006705");
+		keyList.add(2, "S0000006705");
+		keyList.add(3, "S0000006705");
 
-		ArrayList<String> list1 = ExcelUtil.removal(keyList, valueList, "需求").get(0);
-		ArrayList<String> list2 = ExcelUtil.removal(keyList, valueList, "需求").get(1);
+		verList.add(0, "A");
+		verList.add(1, "A");
+		verList.add(2, "B");
+		verList.add(3, "B");
+
+		valueList.add(0, "5A —— 1");
+		valueList.add(1, "5A —— 2");
+		valueList.add(2, "5B —— 1");
+		valueList.add(3, "5B —— 2");
+
+		ArrayList<String> list1 = ExcelUtil.removal(keyList, valueList, verList, "需求").get(0);
+		ArrayList<String> list2 = ExcelUtil.removal(keyList, valueList, verList, "需求").get(1);
 		System.out.println(list1.size());
 		System.out.println(list2.size());
 		for (int i = 0; i < list1.size(); i++) {

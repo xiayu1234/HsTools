@@ -49,6 +49,7 @@ public class Frame extends JFrame {
 					Frame frame = new Frame();
 					// 设置居中
 					frame.setLocationRelativeTo(null);
+					frame.setAlwaysOnTop(isDefaultLookAndFeelDecorated());
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -137,9 +138,9 @@ public class Frame extends JFrame {
 		startBut.setBounds(240, 340, 110, 30);
 		contentPane.add(startBut);
 
-		JPanel logPanel = new JPanel();
-		logPanel.setBounds(20, 210, 550, 120);
-		contentPane.add(logPanel);
+		JLabel logLabel = new JLabel();
+		logLabel.setBounds(20, 210, 550, 120);
+		contentPane.add(logLabel);
 		// 需要显示的列
 		cloList.add("姓名");
 		cloList.add("数量");
@@ -164,9 +165,9 @@ public class Frame extends JFrame {
 			}
 
 		});
-		
-		//补丁统计监听
-		ActionListener bdTjLister  = new ActionListener() {
+
+		// 补丁统计监听
+		ActionListener bdTjLister = new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -174,23 +175,27 @@ public class Frame extends JFrame {
 				log.debug("获取列名为测试执行人的列");
 				ArrayList<String> keyList = ExcelUtil.getColumByName(file2, "补丁编号");
 				ArrayList<String> valueList = ExcelUtil.getColumByName(file2, "测试执行人");
-				//根据缺陷编号对原始数据去重
-				ArrayList<String> list = ExcelUtil.removal(keyList, valueList, "补丁").get(1);
+				ArrayList<String> verList = ExcelUtil.getColumByName(file2, "修改的版本");
+				// 根据缺陷编号对原始数据去重
+				ArrayList<String> list = ExcelUtil.removal(keyList, valueList, verList, "需求").get(1);
 				log.debug("调用统计数量的方法");
+				label.setText("开始统计");
 				ArrayList<TjBean> beanList = TjUtil.getCount(list, ExcelUtil.getColumnList(dictionary));
 				long time = System.currentTimeMillis();
 				log.info("开始打印Excel文件");
-
+				label.setText("开始导出Excel");
 				log.info("导出文件的名称:" + jcb.getSelectedItem() + time);
-				ExcelUtil.printExcel(beanList, (String)jcb.getSelectedItem() + time, "", cloList, (String)jcb.getSelectedItem());
+				ExcelUtil.printExcel(beanList, (String) jcb.getSelectedItem() + time, "", cloList,
+						(String) jcb.getSelectedItem());
+				label.setText("导出Excel结束");
+				label.setText("统计结束");
+				log.info("Excel打印结束");
 
-				log.info("Excel打印结束");	
-				
-			}	
+			}
 		};
-		
-		//需求统计监听
-		ActionListener xqTjLister  = new ActionListener() {
+
+		// 需求统计监听
+		ActionListener xqTjLister = new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -198,26 +203,32 @@ public class Frame extends JFrame {
 				ArrayList<String> xqList = ExcelUtil.getColumByName(file1, "需求编号");
 				ArrayList<String> keyList = ExcelUtil.getColumByName(file2, "需求编号");
 				ArrayList<String> valueList = ExcelUtil.getColumByName(file2, "测试执行人");
-				//对修改单根据需求编号去重
-				ArrayList<String> xgList = ExcelUtil.removal(keyList, valueList, "需求").get(0);
-				ArrayList<String> targetList =  ExcelUtil.removal(keyList, valueList, "需求").get(1);
+				ArrayList<String> verList = ExcelUtil.getColumByName(file2, "修改的版本");
+				// 对修改单根据需求编号去重
+				ArrayList<String> xgList = ExcelUtil.removal(keyList, valueList, verList, "需求").get(0);
+				ArrayList<String> targetList = ExcelUtil.removal(keyList, valueList, verList, "需求").get(1);
 				log.debug("获取缺陷类需求的修改单的测试执行人列");
 				ArrayList<String> list = TjUtil.getTemFile(xgList, xqList, targetList);
 				log.debug("缺陷类需求的修改单数量：" + list.size());
 				log.debug("调用统计数量的方法");
+				label.setText("开始统计");
 				ArrayList<TjBean> beanList = TjUtil.getCount(list, ExcelUtil.getColumnList(dictionary));
 				long time = System.currentTimeMillis();
 
 				log.info("开始导出统计结果的excel");
+				label.setText("开始导出excel");
 				log.info("导出文件的名称:" + jcb.getSelectedItem() + time);
-				ExcelUtil.printExcel(beanList, (String)jcb.getSelectedItem() + time, "", cloList, (String)jcb.getSelectedItem());
-				log.info("Excel打印结束");				
+				ExcelUtil.printExcel(beanList, (String) jcb.getSelectedItem() + time, "", cloList,
+						(String) jcb.getSelectedItem());
+				log.info("Excel打印结束");
+				label.setText("导出Excel结束");
+				label.setText("统计结束");
 			}
-			
+
 		};
-		
+
 		startBut.addActionListener(xqTjLister);
-		
+
 		// 下拉框添加事件
 		jcb.addActionListener(new ActionListener() {
 
@@ -235,8 +246,8 @@ public class Frame extends JFrame {
 					log.debug("删除开始统计按钮统计缺陷类需求的监听事件");
 					startBut.removeActionListener(xqTjLister);
 					log.debug(startBut.getActionListeners().length);
-					if(startBut.getActionListeners().length == 0) {
-					startBut.addActionListener(bdTjLister);
+					if (startBut.getActionListeners().length == 0) {
+						startBut.addActionListener(bdTjLister);
 					}
 					break;
 
@@ -248,7 +259,7 @@ public class Frame extends JFrame {
 					log.debug("删除开始统计按钮统计补丁数量的监听事件");
 					startBut.removeActionListener(bdTjLister);
 					log.debug(startBut.getActionListeners().length);
-					if(startBut.getActionListeners().length == 0) {
+					if (startBut.getActionListeners().length == 0) {
 						startBut.addActionListener(xqTjLister);
 					}
 					break;

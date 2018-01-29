@@ -180,11 +180,13 @@ public class ExcelUtil {
 	 *            key集合（判断是否重复的依据）
 	 * @param valueList
 	 *            value集合
+	 * @param verList
+	 *            版本信息集合
 	 * @return list list.get(0) 去重后的keyList list.get(1) 去重后的valueList
 	 * 
 	 */
 	public static ArrayList<ArrayList<String>> removal(ArrayList<String> keyList, ArrayList<String> valueList,
-			String type) {
+			ArrayList<String> verList, String type) {
 
 		ArrayList<ArrayList<String>> list = new ArrayList<>();
 		if (type == "补丁") {
@@ -202,7 +204,7 @@ public class ExcelUtil {
 		} else if (type == "需求") {
 			for (int i = 0; i < keyList.size(); i++) {
 				for (int j = i + 1; j < keyList.size(); j++) {
-					if (keyList.get(i).equals(keyList.get(j))) {
+					if (keyList.get(i).equals(keyList.get(j)) && !(verList.get(i).equals(verList.get(j)))) {
 						keyList.remove(i);
 						valueList.remove(i);
 						i--;

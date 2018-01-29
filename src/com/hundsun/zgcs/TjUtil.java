@@ -41,7 +41,6 @@ public class TjUtil {
 
 				// 人员数据统计
 				for (int p = 0; p < list.get(j).size(); p++) {
-
 					// 判断人员是否在测试执行人里
 					if (column.get(i).indexOf(list.get(j).get(p)) != -1) {
 						// 判断键值是否存在
