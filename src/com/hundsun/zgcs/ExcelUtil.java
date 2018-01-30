@@ -128,12 +128,12 @@ public class ExcelUtil {
 		Sheet sheet = workBook.getSheetAt(0);
 		// 获取行数
 		int rowNum = sheet.getLastRowNum() + 1;
-		log.info(file.getName() + "行数为：" + rowNum);
+		log.debug(file.getName() + "行数为：" + rowNum);
 
 		Row row = sheet.getRow(0);
 		// 获取列数
 		int colNum = row.getPhysicalNumberOfCells();
-		log.info(file.getName() + "列数为：" + colNum);
+		log.debug(file.getName() + "列数为：" + colNum);
 		for (int j = 0; j < colNum; j++) {
 			ArrayList<String> cellList = new ArrayList<>();
 			cellList.clear();
@@ -159,7 +159,7 @@ public class ExcelUtil {
 	 * @return 列
 	 */
 	public static ArrayList<String> getColumByName(File file, String name) {
-		log.info("获取列名为" + name + "的列");
+		log.debug("获取列名为" + name + "的列");
 		ArrayList<ArrayList<String>> columList = getColumnList(file);
 		ArrayList<String> list = new ArrayList<>();
 		for (ArrayList<String> arrayList : columList) {
@@ -168,7 +168,7 @@ public class ExcelUtil {
 				break;
 			}
 		}
-		log.info(name + "列的行数：" + list.size());
+		log.debug(name + "列的行数：" + list.size());
 		return list;
 
 	}
@@ -191,9 +191,17 @@ public class ExcelUtil {
 		ArrayList<ArrayList<String>> list = new ArrayList<>();
 		if (type == "补丁") {
 			for (int i = 0; i < keyList.size(); i++) {
+				if (keyList.get(i).length() > 11) {
+					String str = keyList.get(i).substring(0, 11);
+					keyList.set(i, str);
+				}
+
+			}
+
+			for (int i = 0; i < keyList.size(); i++) {
 				for (int j = i + 1; j < keyList.size(); j++) {
-					if (keyList.get(i).length() > 11
-							&& keyList.get(i).substring(0, 10).equals(keyList.get(j).substring(0, 10))) {
+
+					if (keyList.get(i).equals(keyList.get(j))) {
 						keyList.remove(i);
 						valueList.remove(i);
 						i--;
@@ -211,20 +219,20 @@ public class ExcelUtil {
 						i--;
 						break;
 					}
-									
+
 				}
 			}
 			for (int i = 0; i < keyList.size(); i++) {
 				for (int j = i + 1; j < keyList.size(); j++) {
 					// 同版本相同测试人去重
 					if (keyList.get(i).equals(keyList.get(j)) && (verList.get(i).equals(verList.get(j)))) {
-						keyList.set(j, keyList.get(i)+keyList.get(j));
+						keyList.set(j, keyList.get(i) + keyList.get(j));
 						keyList.remove(i);
 						valueList.remove(i);
 						i--;
 						break;
 					}
-									
+
 				}
 			}
 		}
@@ -313,10 +321,10 @@ public class ExcelUtil {
 				Field field = fields[i];
 
 				String fieldName = field.getName();
-				log.debug("字段名:" + fieldName);
+				// log.debug("字段名:" + fieldName);
 				// 获取get方法
 				String methodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-				log.debug("方法名:" + methodName);
+				// log.debug("方法名:" + methodName);
 				Class clsBean = bean.getClass();
 				try {
 					Method getMethod = clsBean.getMethod(methodName, new Class[] {});

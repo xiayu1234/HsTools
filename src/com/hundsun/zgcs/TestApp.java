@@ -22,6 +22,9 @@ public class TestApp {
 		keyList.add(1, "S0000006705");
 		keyList.add(2, "S0000006705");
 		keyList.add(3, "S0000006705");
+		String str = "S0000003696-1";
+		System.out.println(str.length());
+		System.out.println(str.substring(0, 11));
 
 		verList.add(0, "A");
 		verList.add(1, "A");

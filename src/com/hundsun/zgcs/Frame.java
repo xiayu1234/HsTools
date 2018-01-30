@@ -4,7 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.PrintStream;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -14,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -35,6 +38,8 @@ public class Frame extends JFrame {
 	private File file1;
 	// 修改单Excel文件
 	private File file2;
+
+	JLabel logLabel;
 	private ArrayList<String> cloList = new ArrayList<>();
 
 	public static Logger log = LogManager.getLogger(Frame.class);
@@ -46,11 +51,16 @@ public class Frame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+
+					String windows = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+					UIManager.setLookAndFeel(windows);
 					Frame frame = new Frame();
 					// 设置居中
 					frame.setLocationRelativeTo(null);
 					frame.setAlwaysOnTop(isDefaultLookAndFeelDecorated());
+					frame.setResizable(false);
 					frame.setVisible(true);
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -64,7 +74,7 @@ public class Frame extends JFrame {
 	public Frame() {
 
 		File dictionary = new File("dictionary.xlsx");
-		log.info("数据字典的路径" + dictionary.getAbsolutePath());
+		log.debug("数据字典的路径" + dictionary.getAbsolutePath());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 600, 450);
 		setTitle("Excel统计工具");
@@ -113,7 +123,7 @@ public class Frame extends JFrame {
 				if (returnVal == fileChoose.APPROVE_OPTION) {
 					file1 = fileChoose.getSelectedFile();
 
-					System.out.println(file1.getName());
+					// System.out.println(file1.getName());
 					textPane1.setText(file1.getAbsolutePath());
 					log.debug("需求列表的路径：" + file1.getAbsolutePath());
 
@@ -138,7 +148,7 @@ public class Frame extends JFrame {
 		startBut.setBounds(240, 340, 110, 30);
 		contentPane.add(startBut);
 
-		JLabel logLabel = new JLabel();
+		logLabel = new JLabel();
 		logLabel.setBounds(20, 210, 550, 120);
 		contentPane.add(logLabel);
 		// 需要显示的列
@@ -158,7 +168,7 @@ public class Frame extends JFrame {
 				if (returnVal == fileChoose.APPROVE_OPTION) {
 					file2 = fileChoose.getSelectedFile();
 
-					System.out.println(file2.getName());
+					// System.out.println(file2.getName());
 					textPane2.setText(file2.getAbsolutePath());
 					log.debug("修改单列表的路径：" + file2.getAbsolutePath());
 				}
@@ -177,18 +187,18 @@ public class Frame extends JFrame {
 				ArrayList<String> valueList = ExcelUtil.getColumByName(file2, "测试执行人");
 				ArrayList<String> verList = ExcelUtil.getColumByName(file2, "修改的版本");
 				// 根据缺陷编号对原始数据去重
-				ArrayList<String> list = ExcelUtil.removal(keyList, valueList, verList, "需求").get(1);
+				ArrayList<String> list = ExcelUtil.removal(keyList, valueList, verList, "补丁").get(1);
 				log.debug("调用统计数量的方法");
-				label.setText("开始统计");
+				logLabel.setText("开始统计\n");
 				ArrayList<TjBean> beanList = TjUtil.getCount(list, ExcelUtil.getColumnList(dictionary));
 				long time = System.currentTimeMillis();
-				log.info("开始打印Excel文件");
-				label.setText("开始导出Excel");
+				log.info("开始打印Excel文件\n");
+				logLabel.setText("开始导出Excel");
 				log.info("导出文件的名称:" + jcb.getSelectedItem() + time);
 				ExcelUtil.printExcel(beanList, (String) jcb.getSelectedItem() + time, "", cloList,
 						(String) jcb.getSelectedItem());
-				label.setText("导出Excel结束");
-				label.setText("统计结束");
+				logLabel.setText("导出Excel结束\n");
+				logLabel.setText("统计结束\n");
 				log.info("Excel打印结束");
 
 			}
@@ -211,18 +221,18 @@ public class Frame extends JFrame {
 				ArrayList<String> list = TjUtil.getTemFile(xgList, xqList, targetList);
 				log.debug("缺陷类需求的修改单数量：" + list.size());
 				log.debug("调用统计数量的方法");
-				label.setText("开始统计");
+				logLabel.setText("开始统计\n");
 				ArrayList<TjBean> beanList = TjUtil.getCount(list, ExcelUtil.getColumnList(dictionary));
 				long time = System.currentTimeMillis();
 
 				log.info("开始导出统计结果的excel");
-				label.setText("开始导出excel");
+				logLabel.setText("开始导出excel\n");
 				log.info("导出文件的名称:" + jcb.getSelectedItem() + time);
 				ExcelUtil.printExcel(beanList, (String) jcb.getSelectedItem() + time, "", cloList,
 						(String) jcb.getSelectedItem());
 				log.info("Excel打印结束");
-				label.setText("导出Excel结束");
-				label.setText("统计结束");
+				logLabel.setText("导出Excel结束\n");
+				logLabel.setText("统计结束\n");
 			}
 
 		};
