@@ -1,14 +1,16 @@
 package com.hundsun.zgcs;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.PrintStream;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -55,11 +57,8 @@ public class Frame extends JFrame {
 					String windows = "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
 					UIManager.setLookAndFeel(windows);
 					Frame frame = new Frame();
-					// 设置居中
-					frame.setLocationRelativeTo(null);
-					frame.setAlwaysOnTop(isDefaultLookAndFeelDecorated());
-					frame.setResizable(false);
-					frame.setVisible(true);
+
+			
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -73,11 +72,21 @@ public class Frame extends JFrame {
 	 */
 	public Frame() {
 
+		Toolkit tk = Toolkit.getDefaultToolkit();
+		Image image = tk.createImage("Statistics.ico"); 
+		System.out.println(image);
+		this.setIconImage(image);
+
+		this.setLocationRelativeTo(null);
+		this.setAlwaysOnTop(isDefaultLookAndFeelDecorated());
+		this.setResizable(false);
+		this.setVisible(true);
+
 		File dictionary = new File("dictionary.xlsx");
 		log.debug("数据字典的路径" + dictionary.getAbsolutePath());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 600, 450);
-		setTitle("Excel统计工具");
+		setTitle("Statistics.exe");
 		JPanel contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
@@ -148,7 +157,11 @@ public class Frame extends JFrame {
 		startBut.setBounds(240, 340, 110, 30);
 		contentPane.add(startBut);
 
-		logLabel = new JLabel();
+		logLabel = new JLabel("", JLabel.CENTER);
+
+		logLabel.setFont(new java.awt.Font("Dialog", 1, 15));
+		logLabel.setForeground(Color.red);
+
 		logLabel.setBounds(20, 210, 550, 120);
 		contentPane.add(logLabel);
 		// 需要显示的列
@@ -189,16 +202,13 @@ public class Frame extends JFrame {
 				// 根据缺陷编号对原始数据去重
 				ArrayList<String> list = ExcelUtil.removal(keyList, valueList, verList, "补丁").get(1);
 				log.debug("调用统计数量的方法");
-				logLabel.setText("开始统计\n");
 				ArrayList<TjBean> beanList = TjUtil.getCount(list, ExcelUtil.getColumnList(dictionary));
 				long time = System.currentTimeMillis();
 				log.info("开始打印Excel文件\n");
-				logLabel.setText("开始导出Excel");
 				log.info("导出文件的名称:" + jcb.getSelectedItem() + time);
 				ExcelUtil.printExcel(beanList, (String) jcb.getSelectedItem() + time, "", cloList,
 						(String) jcb.getSelectedItem());
-				logLabel.setText("导出Excel结束\n");
-				logLabel.setText("统计结束\n");
+				logLabel.setText("统计结束,请查看结果!");
 				log.info("Excel打印结束");
 
 			}
@@ -221,18 +231,15 @@ public class Frame extends JFrame {
 				ArrayList<String> list = TjUtil.getTemFile(xgList, xqList, targetList);
 				log.debug("缺陷类需求的修改单数量：" + list.size());
 				log.debug("调用统计数量的方法");
-				logLabel.setText("开始统计\n");
 				ArrayList<TjBean> beanList = TjUtil.getCount(list, ExcelUtil.getColumnList(dictionary));
 				long time = System.currentTimeMillis();
 
 				log.info("开始导出统计结果的excel");
-				logLabel.setText("开始导出excel\n");
 				log.info("导出文件的名称:" + jcb.getSelectedItem() + time);
 				ExcelUtil.printExcel(beanList, (String) jcb.getSelectedItem() + time, "", cloList,
 						(String) jcb.getSelectedItem());
 				log.info("Excel打印结束");
-				logLabel.setText("导出Excel结束\n");
-				logLabel.setText("统计结束\n");
+				logLabel.setText("统计结束,请查看结果!");
 			}
 
 		};
