@@ -202,6 +202,7 @@ public class ExcelUtil {
 				for (int j = i + 1; j < keyList.size(); j++) {
 
 					if (keyList.get(i).equals(keyList.get(j))) {
+						valueList.set(j, valueList.get(j)+valueList.get(i));
 						keyList.remove(i);
 						valueList.remove(i);
 						i--;
@@ -210,7 +211,22 @@ public class ExcelUtil {
 				}
 			}
 		} else if (type == "需求") {
+			
 			for (int i = 0; i < keyList.size(); i++) {
+				for (int j = i + 1; j < keyList.size(); j++) {
+
+					if (keyList.get(i).equals(keyList.get(j))) {
+						valueList.set(j, valueList.get(j)+valueList.get(i));
+						keyList.remove(i);
+						valueList.remove(i);
+						i--;
+						break;
+					}
+				}
+			}
+			/*
+			for (int i = 0; i < keyList.size(); i++) {
+				
 				for (int j = i + 1; j < keyList.size(); j++) {
 					// 版本去重
 					if (keyList.get(i).equals(keyList.get(j)) && !(verList.get(i).equals(verList.get(j)))) {
@@ -235,6 +251,7 @@ public class ExcelUtil {
 
 				}
 			}
+			*/
 		}
 
 		list.add(0, keyList);

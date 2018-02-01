@@ -58,8 +58,6 @@ public class Frame extends JFrame {
 					UIManager.setLookAndFeel(windows);
 					Frame frame = new Frame();
 
-			
-
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -73,7 +71,7 @@ public class Frame extends JFrame {
 	public Frame() {
 
 		Toolkit tk = Toolkit.getDefaultToolkit();
-		Image image = tk.createImage("Statistics.ico"); 
+		Image image = tk.createImage("Statistics.ico");
 		System.out.println(image);
 		this.setIconImage(image);
 
@@ -259,6 +257,7 @@ public class Frame extends JFrame {
 					button1.setVisible(false);
 					label_1.setVisible(false);
 					textPane1.setVisible(false);
+					label_2.setText("补丁单");
 					log.info("统计模式为:" + jcb.getSelectedItem());
 					log.debug("删除开始统计按钮统计缺陷类需求的监听事件");
 					startBut.removeActionListener(xqTjLister);
@@ -272,6 +271,7 @@ public class Frame extends JFrame {
 					button1.setVisible(true);
 					label_1.setVisible(true);
 					textPane1.setVisible(true);
+					label_2.setText("修改单");
 					log.info("统计模式为:" + jcb.getSelectedItem());
 					log.debug("删除开始统计按钮统计补丁数量的监听事件");
 					startBut.removeActionListener(bdTjLister);
