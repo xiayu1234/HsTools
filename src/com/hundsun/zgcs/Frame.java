@@ -266,10 +266,7 @@ public class Frame extends JFrame {
 
 				System.out.println("qxbdList:" + qxbdList.size());
 
-				/*
-				 * list.add(0, qxbdList); list.add(0, bdList); list.add(0, qxxqList);
-				 * list.add(0, xqList);
-				 */
+			
 				HashMap<String, Integer> qxbdMap = TjUtil.getCount(qxbdList, dicList);
 				HashMap<String, Integer> bdMap = TjUtil.getCount(bdList, dicList);
 				HashMap<String, Integer> qxxqMap = TjUtil.getCount(qxxqList, dicList);
@@ -317,7 +314,8 @@ public class Frame extends JFrame {
 							if ((bdSum + xqSum) == 0 || (bdNum + xqNum) == 0) {
 								tjBean.setPercent("0%");
 							} else {
-								double result = (bdNum + xqNum) / (bdSum + xqSum);
+								double result = ((double)(bdNum + xqNum) / (bdSum + xqSum));
+								System.out.println(result);
 								DecimalFormat df = new DecimalFormat("0.00%");
 								String percent = df.format(result);
 								tjBean.setPercent(percent);

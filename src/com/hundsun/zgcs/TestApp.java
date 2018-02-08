@@ -12,7 +12,7 @@ public class TestApp {
 	public static void main(String[] args) {
 		
 	       
-			double result=0.051111122111111;
+		double result = ((137 + 5) / (double)(137 + 177));
 	        DecimalFormat df = new DecimalFormat("0.00%");
 	        String r = df.format(result);
 	        System.out.println(r);
