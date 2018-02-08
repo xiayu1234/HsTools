@@ -19,6 +19,7 @@ import java.util.Iterator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.hssf.record.ArrayRecord;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -202,7 +203,7 @@ public class ExcelUtil {
 				for (int j = i + 1; j < keyList.size(); j++) {
 
 					if (keyList.get(i).equals(keyList.get(j))) {
-						valueList.set(j, valueList.get(j)+valueList.get(i));
+						valueList.set(j, valueList.get(j) + valueList.get(i));
 						keyList.remove(i);
 						valueList.remove(i);
 						i--;
@@ -211,12 +212,12 @@ public class ExcelUtil {
 				}
 			}
 		} else if (type == "需求") {
-			
+
 			for (int i = 0; i < keyList.size(); i++) {
 				for (int j = i + 1; j < keyList.size(); j++) {
 
 					if (keyList.get(i).equals(keyList.get(j))) {
-						valueList.set(j, valueList.get(j)+valueList.get(i));
+						valueList.set(j, valueList.get(j) + valueList.get(i));
 						keyList.remove(i);
 						valueList.remove(i);
 						i--;
@@ -224,34 +225,7 @@ public class ExcelUtil {
 					}
 				}
 			}
-			/*
-			for (int i = 0; i < keyList.size(); i++) {
-				
-				for (int j = i + 1; j < keyList.size(); j++) {
-					// 版本去重
-					if (keyList.get(i).equals(keyList.get(j)) && !(verList.get(i).equals(verList.get(j)))) {
-						keyList.remove(i);
-						valueList.remove(i);
-						i--;
-						break;
-					}
 
-				}
-			}
-			for (int i = 0; i < keyList.size(); i++) {
-				for (int j = i + 1; j < keyList.size(); j++) {
-					// 同版本相同测试人去重
-					if (keyList.get(i).equals(keyList.get(j)) && (verList.get(i).equals(verList.get(j)))) {
-						keyList.set(j, keyList.get(i) + keyList.get(j));
-						keyList.remove(i);
-						valueList.remove(i);
-						i--;
-						break;
-					}
-
-				}
-			}
-			*/
 		}
 
 		list.add(0, keyList);
@@ -277,13 +251,13 @@ public class ExcelUtil {
 	 * 
 	 */
 	public static void printExcel(ArrayList<TjBean> list, String fileName, String filePath,
-			ArrayList<String> columnNameList, String title) {
+			ArrayList<String> columnNameList) {
 
 		TjBean bean = new TjBean();
 		// 声明一个工作薄
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		// 生成一个表格
-		HSSFSheet sheet = workbook.createSheet(title);
+		HSSFSheet sheet = workbook.createSheet("统计结果");
 		// 设置表格默认列宽度为15个字节
 		sheet.setDefaultColumnWidth((short) 15);
 		// 生成一个样式
@@ -381,4 +355,88 @@ public class ExcelUtil {
 		}
 
 	}
+
+	/**
+	 * 对存在多个需求编号的修改单进行分离
+	 * 
+	 * @param bdList
+	 *            补丁编号
+	 * @param zxrList
+	 *            测试执行人
+	 * @return
+	 * 
+	 * 		list.add(0) 处理后的需求链表,list.add(1) 处理以后的测试执行人列表
+	 */
+	public static ArrayList<ArrayList<String>> dataSeparate(ArrayList<String> bdList, ArrayList<String> zxrList) {
+		
+	
+		ArrayList<ArrayList<String>> list = new ArrayList<>();
+
+		for (int i = 0; i < bdList.size(); i++) {
+
+			if (bdList.get(i).length() > 15) {
+
+				String[] str = bdList.get(i).split(",");
+
+				for (int j = 0; j < str.length; j++) {
+					bdList.add(str[j]);
+					zxrList.add(zxrList.get(i));
+				}
+
+				bdList.remove(i);
+				zxrList.remove(i);
+
+			}
+
+		}
+		list.add(0, bdList);
+		list.add(1, zxrList);
+		log.debug("分离后的需求修改单数量" + zxrList.size() );
+		return list;
+
+	}
+
+	/**
+	 * 过滤需要统计的补丁
+	 * 
+	 * @param file
+	 *            补丁文件
+	 * @return 
+	 * resList.get(0) 补丁编号链表,  resList.get(1) 测试执行人列表
+	 */
+	public static ArrayList<ArrayList<String>> filterBd(File file) {
+		
+		log.debug("去重前的补丁数量");
+		ArrayList<String> reasonList = getColumByName(file, "补丁原因");
+		log.debug("筛选前的补丁数量" + reasonList.size());
+		ArrayList<ArrayList<String>> list = getColumnList(file);
+		ArrayList<ArrayList<String>> resList = new ArrayList<>();
+
+		for (int i = 0; i < reasonList.size(); i++) {
+
+			// 判断是否缺陷原因是否是TS回复的普通缺陷和影响业务开展
+			if (reasonList.get(i).equals("影响业务开展") || reasonList.get(i).equals("TS回复的普通缺陷")) {
+
+				for (int j = 0; j < list.size(); j++) {
+					// 删除这一行数据
+					list.get(j).remove(j);
+				}
+
+			}
+
+		}
+
+		for (ArrayList<String> arrayList : list) {
+			if (arrayList.get(0).equals("补丁编号")) {
+				resList.add(arrayList);
+			}else if(arrayList.get(0).equals("测试执行人")) {
+				resList.add(arrayList);
+			}
+			
+			
+		}
+		log.debug("筛选后的补丁数量" + resList.get(0).size());
+		return resList;
+	}
+
 }

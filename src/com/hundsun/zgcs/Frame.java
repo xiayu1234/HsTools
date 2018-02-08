@@ -8,7 +8,9 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -25,6 +27,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.sun.javafx.collections.MappingChange.Map;
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
+
 public class Frame extends JFrame {
 
 	/**
@@ -36,10 +41,18 @@ public class Frame extends JFrame {
 	 * 数据字典存放的excel
 	 */
 	private File dictionary;
-	// 需求Excel文件
+	/**
+	 * 需求Excel
+	 */
 	private File file1;
-	// 修改单Excel文件
+	/**
+	 * 修改单Excel文件
+	 */
 	private File file2;
+	/**
+	 * 补丁单Excel文件
+	 */
+	private File file3;
 
 	JLabel logLabel;
 	private ArrayList<String> cloList = new ArrayList<>();
@@ -58,6 +71,8 @@ public class Frame extends JFrame {
 					UIManager.setLookAndFeel(windows);
 					Frame frame = new Frame();
 
+					frame.setLocationRelativeTo(null);
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -75,7 +90,6 @@ public class Frame extends JFrame {
 		System.out.println(image);
 		this.setIconImage(image);
 
-		this.setLocationRelativeTo(null);
 		this.setAlwaysOnTop(isDefaultLookAndFeelDecorated());
 		this.setResizable(false);
 		this.setVisible(true);
@@ -93,18 +107,11 @@ public class Frame extends JFrame {
 		JPanel panel = new JPanel();
 		contentPane.add(panel, BorderLayout.CENTER);
 
-		JLabel label = new JLabel("统计模式:");
-		label.setBounds(10, 50, 60, 20);
-		contentPane.add(label);
-
 		// 下拉框
-		jcb = new JComboBox();
-		jcb.addItem("缺陷类需求单统计");
-		jcb.addItem("临时补丁遗漏统计");
-
-		jcb.setBounds(80, 50, 490, 20);
-		contentPane.add(jcb);
-		jcb.setVisible(true);
+		/*
+		 * jcb = new JComboBox(); jcb.addItem("缺陷类需求单统计"); jcb.addItem("临时补丁遗漏统计");
+		 * jcb.setBounds(80, 50, 490, 20); contentPane.add(jcb); jcb.setVisible(true);
+		 */
 
 		JButton button1 = new JButton("选择文件");
 		button1.setBounds(480, 170, 90, 20);
@@ -139,32 +146,17 @@ public class Frame extends JFrame {
 
 		});
 
-		JButton button2 = new JButton("选择文件");
-		button2.setBounds(480, 110, 90, 20);
-		contentPane.add(button2);
-
 		JLabel label_2 = new JLabel("修改单:");
 		label_2.setBounds(10, 110, 60, 20);
 		contentPane.add(label_2);
 
+		JButton button2 = new JButton("选择文件");
+		button2.setBounds(480, 110, 90, 20);
+		contentPane.add(button2);
+
 		JTextPane textPane2 = new JTextPane();
 		textPane2.setBounds(80, 110, 390, 20);
 		contentPane.add(textPane2);
-
-		JButton startBut = new JButton("开始统计");
-		startBut.setBounds(240, 340, 110, 30);
-		contentPane.add(startBut);
-
-		logLabel = new JLabel("", JLabel.CENTER);
-
-		logLabel.setFont(new java.awt.Font("Dialog", 1, 15));
-		logLabel.setForeground(Color.red);
-
-		logLabel.setBounds(20, 210, 550, 120);
-		contentPane.add(logLabel);
-		// 需要显示的列
-		cloList.add("姓名");
-		cloList.add("数量");
 
 		// 添加按钮点击事件
 		button2.addActionListener(new ActionListener() {
@@ -187,101 +179,162 @@ public class Frame extends JFrame {
 
 		});
 
-		// 补丁统计监听
-		ActionListener bdTjLister = new ActionListener() {
+		JButton startBut = new JButton("开始统计");
+		startBut.setBounds(240, 340, 110, 30);
+		contentPane.add(startBut);
+
+		logLabel = new JLabel("", JLabel.CENTER);
+
+		logLabel.setFont(new java.awt.Font("Dialog", 1, 15));
+		logLabel.setForeground(Color.red);
+
+		logLabel.setBounds(20, 210, 550, 120);
+		contentPane.add(logLabel);
+
+		JLabel label_3 = new JLabel("补丁单:");
+		label_3.setBounds(10, 50, 60, 20);
+		contentPane.add(label_3);
+
+		JTextPane textPane3 = new JTextPane();
+		textPane3.setBounds(80, 50, 390, 20);
+		contentPane.add(textPane3);
+
+		JButton button3 = new JButton("选择文件");
+		button3.setBounds(480, 50, 90, 20);
+		contentPane.add(button3);
+		button3.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				log.info("临时补丁遗漏统计开始");
-				log.debug("获取列名为测试执行人的列");
-				ArrayList<String> keyList = ExcelUtil.getColumByName(file2, "补丁编号");
-				ArrayList<String> valueList = ExcelUtil.getColumByName(file2, "测试执行人");
-				ArrayList<String> verList = ExcelUtil.getColumByName(file2, "修改的版本");
-				// 根据缺陷编号对原始数据去重
-				ArrayList<String> list = ExcelUtil.removal(keyList, valueList, verList, "补丁").get(1);
-				log.debug("调用统计数量的方法");
-				ArrayList<TjBean> beanList = TjUtil.getCount(list, ExcelUtil.getColumnList(dictionary));
-				long time = System.currentTimeMillis();
-				log.info("开始打印Excel文件\n");
-				log.info("导出文件的名称:" + jcb.getSelectedItem() + time);
-				ExcelUtil.printExcel(beanList, (String) jcb.getSelectedItem() + time, "", cloList,
-						(String) jcb.getSelectedItem());
-				logLabel.setText("统计结束,请查看结果!");
-				log.info("Excel打印结束");
+				JFileChooser fileChoose = new JFileChooser();
+				// 过滤展示Excel格式的文件
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel文件", "xls", "xlsx");
+				fileChoose.setFileFilter(filter);
+				int returnVal = fileChoose.showOpenDialog(Frame.this);
+				if (returnVal == fileChoose.APPROVE_OPTION) {
+					file3 = fileChoose.getSelectedFile();
 
+					// System.out.println(file1.getName());
+					textPane3.setText(file3.getAbsolutePath());
+					log.debug("需求列表的路径：" + file3.getAbsolutePath());
+
+				}
 			}
-		};
+		});
+		// 需要显示的列
+		cloList.add(0, "姓名");
+		cloList.add(1, "缺陷补丁");
+		cloList.add(2, "补丁总数");
+		cloList.add(3, "缺陷需求");
+		cloList.add(4, "需求总数");
+		cloList.add(5, "百分比");
 
-		// 需求统计监听
-		ActionListener xqTjLister = new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				ArrayList<String> xqList = ExcelUtil.getColumByName(file1, "需求编号");
-				ArrayList<String> keyList = ExcelUtil.getColumByName(file2, "需求编号");
-				ArrayList<String> valueList = ExcelUtil.getColumByName(file2, "测试执行人");
-				ArrayList<String> verList = ExcelUtil.getColumByName(file2, "修改的版本");
-				// 对修改单根据需求编号去重
-				ArrayList<String> xgList = ExcelUtil.removal(keyList, valueList, verList, "需求").get(0);
-				ArrayList<String> targetList = ExcelUtil.removal(keyList, valueList, verList, "需求").get(1);
-				log.debug("获取缺陷类需求的修改单的测试执行人列");
-				ArrayList<String> list = TjUtil.getTemFile(xgList, xqList, targetList);
-				log.debug("缺陷类需求的修改单数量：" + list.size());
-				log.debug("调用统计数量的方法");
-				ArrayList<TjBean> beanList = TjUtil.getCount(list, ExcelUtil.getColumnList(dictionary));
-				long time = System.currentTimeMillis();
-
-				log.info("开始导出统计结果的excel");
-				log.info("导出文件的名称:" + jcb.getSelectedItem() + time);
-				ExcelUtil.printExcel(beanList, (String) jcb.getSelectedItem() + time, "", cloList,
-						(String) jcb.getSelectedItem());
-				log.info("Excel打印结束");
-				logLabel.setText("统计结束,请查看结果!");
-			}
-
-		};
-
-		startBut.addActionListener(xqTjLister);
-
-		// 下拉框添加事件
-		jcb.addActionListener(new ActionListener() {
+		startBut.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// 获取选择的统计模式
-				String str = (String) jcb.getSelectedItem();
-				switch (str) {
-				case "临时补丁遗漏统计":
+				ArrayList<ArrayList<String>> list = new ArrayList<>();
 
-					button1.setVisible(false);
-					label_1.setVisible(false);
-					textPane1.setVisible(false);
-					label_2.setText("补丁单");
-					log.info("统计模式为:" + jcb.getSelectedItem());
-					log.debug("删除开始统计按钮统计缺陷类需求的监听事件");
-					startBut.removeActionListener(xqTjLister);
-					log.debug(startBut.getActionListeners().length);
-					if (startBut.getActionListeners().length == 0) {
-						startBut.addActionListener(bdTjLister);
-					}
-					break;
+				ArrayList<ArrayList<String>> dicList = ExcelUtil.getColumnList(dictionary);
 
-				case "缺陷类需求单统计":
-					button1.setVisible(true);
-					label_1.setVisible(true);
-					textPane1.setVisible(true);
-					label_2.setText("修改单");
-					log.info("统计模式为:" + jcb.getSelectedItem());
-					log.debug("删除开始统计按钮统计补丁数量的监听事件");
-					startBut.removeActionListener(bdTjLister);
-					log.debug(startBut.getActionListeners().length);
-					if (startBut.getActionListeners().length == 0) {
-						startBut.addActionListener(xqTjLister);
+				// 所有的需求修改单
+				ArrayList<ArrayList<String>> xqLists = ExcelUtil.dataSeparate(ExcelUtil.getColumByName(file2, "需求编号"),
+						ExcelUtil.getColumByName(file2, "测试执行人"));
+				ArrayList<String> xqList = xqLists.get(1);
+				System.out.println("xqList" + xqList.size());
+				// 缺陷类需求
+				ArrayList<String> qxxqList = TjUtil.getTemFile(xqLists.get(0), ExcelUtil.getColumByName(file1, "需求编号"),
+						xqLists.get(1));
+				System.out.println("缺陷需求的个数" + qxxqList.size());
+
+				// 所有补丁
+				ArrayList<String> bdList = ExcelUtil.getColumByName(file3, "测试执行人");
+				System.out.println("bdList" + bdList.size());
+
+				// 缺陷补丁
+				ArrayList<String> qxbdList = null;
+				qxbdList = ExcelUtil.getColumByName(file3, "测试执行人");
+				/*
+				if (ExcelUtil.filterBd(file3).get(0).equals("测试执行人")) {
+					qxbdList = ExcelUtil.filterBd(file3).get(0);
+				} else {
+					qxbdList = ExcelUtil.filterBd(file3).get(0);
+				}
+				*/
+				
+				
+
+				System.out.println("qxbdList:" + qxbdList.size());
+
+				/*
+				 * list.add(0, qxbdList); list.add(0, bdList); list.add(0, qxxqList);
+				 * list.add(0, xqList);
+				 */
+				HashMap<String, Integer> qxbdMap = TjUtil.getCount(qxbdList, dicList);
+				HashMap<String, Integer> bdMap = TjUtil.getCount(bdList, dicList);
+				HashMap<String, Integer> qxxqMap = TjUtil.getCount(qxxqList, dicList);
+				HashMap<String, Integer> xqMap = TjUtil.getCount(xqList, dicList);
+
+				System.out.println("qxbdMap" + qxbdMap.size());
+				System.out.println("bdMap" + bdMap.size());
+				System.out.println("qxxqMap" + qxxqMap.size());
+				System.out.println("xqMap" + xqMap.size());
+
+				ArrayList<TjBean> beanList = new ArrayList<>();
+				System.out.println(dicList.size());
+				for (int k = 0; k < dicList.size(); k++) {
+					for (int l = 0; l < dicList.get(k).size(); l++) {
+						System.out.println(dicList.get(k).get(l));
+						if (dicList.get(k).get(l).length()>=2) {
+							TjBean tjBean = new TjBean();
+							
+							tjBean.setName(dicList.get(k).get(l));
+							int bdNum = 0;
+							int bdSum = 0;
+							int xqNum = 0;
+							int xqSum = 0;
+
+							if (qxbdMap.get(dicList.get(k).get(l)) != null) {
+								bdNum = qxbdMap.get(dicList.get(k).get(l));
+							}
+
+							if (bdMap.get(dicList.get(k).get(l)) != null) {
+								bdSum = bdMap.get(dicList.get(k).get(l));
+							}
+
+							if (qxxqMap.get(dicList.get(k).get(l)) != null) {
+								xqNum = qxxqMap.get(dicList.get(k).get(l));
+							}
+							if (xqMap.get(dicList.get(k).get(l)) != null) {
+								xqSum = xqMap.get(dicList.get(k).get(l));
+							}
+
+							
+							tjBean.setBdNum(bdNum);
+							tjBean.setBdSum(bdSum);
+							tjBean.setXqNum(xqNum);
+							tjBean.setXqSum(xqSum);
+							if ((bdSum + xqSum) == 0 || (bdNum + xqNum) == 0) {
+								tjBean.setPercent("0%");
+							} else {
+								double result = (bdNum + xqNum) / (bdSum + xqSum);
+								DecimalFormat df = new DecimalFormat("0.00%");
+								String percent = df.format(result);
+								tjBean.setPercent(percent);
+							}
+							
+
+							beanList.add(tjBean);
+						}
+
 					}
-					break;
+
 				}
 
+				long time = System.currentTimeMillis();
+
+				ExcelUtil.printExcel(beanList, "统计结果", time + "", cloList);
+				logLabel.setText("统计结束,请查看结果");
 			}
 		});
 
