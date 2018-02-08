@@ -252,15 +252,11 @@ public class Frame extends JFrame {
 				System.out.println("bdList" + bdList.size());
 
 				// 缺陷补丁
-				ArrayList<String> qxbdList = null;
-				qxbdList = ExcelUtil.getColumByName(file3, "测试执行人");
-				/*
-				if (ExcelUtil.filterBd(file3).get(0).equals("测试执行人")) {
-					qxbdList = ExcelUtil.filterBd(file3).get(0);
-				} else {
-					qxbdList = ExcelUtil.filterBd(file3).get(0);
-				}
-				*/
+				ArrayList<String> qxbdList = ExcelUtil.filterBd(file3);
+				//qxbdList = ExcelUtil.getColumByName(file3, "测试执行人");
+				
+			
+				
 				
 				
 

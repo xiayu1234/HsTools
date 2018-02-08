@@ -368,8 +368,7 @@ public class ExcelUtil {
 	 * 		list.add(0) 处理后的需求链表,list.add(1) 处理以后的测试执行人列表
 	 */
 	public static ArrayList<ArrayList<String>> dataSeparate(ArrayList<String> bdList, ArrayList<String> zxrList) {
-		
-	
+
 		ArrayList<ArrayList<String>> list = new ArrayList<>();
 
 		for (int i = 0; i < bdList.size(); i++) {
@@ -391,7 +390,7 @@ public class ExcelUtil {
 		}
 		list.add(0, bdList);
 		list.add(1, zxrList);
-		log.debug("分离后的需求修改单数量" + zxrList.size() );
+		log.debug("分离后的需求修改单数量" + zxrList.size());
 		return list;
 
 	}
@@ -401,41 +400,40 @@ public class ExcelUtil {
 	 * 
 	 * @param file
 	 *            补丁文件
-	 * @return 
-	 * resList.get(0) 补丁编号链表,  resList.get(1) 测试执行人列表
+	 * @return resList.get(0) 补丁编号链表, resList.get(1) 测试执行人列表
 	 */
-	public static ArrayList<ArrayList<String>> filterBd(File file) {
-		
+	public static ArrayList<String> filterBd(File file) {
+
 		log.debug("去重前的补丁数量");
 		ArrayList<String> reasonList = getColumByName(file, "补丁原因");
+		ArrayList<String> zxrList = getColumByName(file, "测试执行人");
+
 		log.debug("筛选前的补丁数量" + reasonList.size());
 		ArrayList<ArrayList<String>> list = getColumnList(file);
-		ArrayList<ArrayList<String>> resList = new ArrayList<>();
+		//ArrayList<ArrayList<String>> resList = new ArrayList<>();
+		ArrayList<String> resList = new ArrayList<>();
 
-		for (int i = 0; i < reasonList.size(); i++) {
+		for (int i = 1; i < reasonList.size(); i++) {
 
 			// 判断是否缺陷原因是否是TS回复的普通缺陷和影响业务开展
-			if (reasonList.get(i).equals("影响业务开展") || reasonList.get(i).equals("TS回复的普通缺陷")) {
-
-				for (int j = 0; j < list.size(); j++) {
-					// 删除这一行数据
-					list.get(j).remove(j);
-				}
-
+			if ((reasonList.get(i).equals("影响业务开展") || reasonList.get(i).equals("TS回复的普通缺陷"))) {
+				
+					resList.add(zxrList.get(i));
+			
 			}
 
 		}
-
+		/**
 		for (ArrayList<String> arrayList : list) {
 			if (arrayList.get(0).equals("补丁编号")) {
 				resList.add(arrayList);
-			}else if(arrayList.get(0).equals("测试执行人")) {
+			} else if (arrayList.get(0).equals("测试执行人")) {
 				resList.add(arrayList);
 			}
-			
-			
+
 		}
-		log.debug("筛选后的补丁数量" + resList.get(0).size());
+		*/
+		log.debug("筛选后的补丁数量" + resList.size());
 		return resList;
 	}
 
