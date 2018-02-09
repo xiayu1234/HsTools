@@ -170,6 +170,9 @@ public class ExcelUtil {
 			}
 		}
 		log.debug(name + "列的行数：" + list.size());
+		if(list.size() ==0 ) {
+		log.error("列名为" + name + "列未取到，请检查Excel是否正确");
+		}
 		return list;
 
 	}
@@ -423,16 +426,6 @@ public class ExcelUtil {
 			}
 
 		}
-		/**
-		for (ArrayList<String> arrayList : list) {
-			if (arrayList.get(0).equals("补丁编号")) {
-				resList.add(arrayList);
-			} else if (arrayList.get(0).equals("测试执行人")) {
-				resList.add(arrayList);
-			}
-
-		}
-		*/
 		log.debug("筛选后的补丁数量" + resList.size());
 		return resList;
 	}

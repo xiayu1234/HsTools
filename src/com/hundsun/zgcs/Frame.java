@@ -233,13 +233,19 @@ public class Frame extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ArrayList<ArrayList<String>> list = new ArrayList<>();
+				
+				logLabel.setText("");
+
+				ArrayList<String> verList = ExcelUtil.getColumByName(file2, "修改的版本");
+				ArrayList<String> zxrList = ExcelUtil.getColumByName(file2, "测试执行人");
+				ArrayList<String> list = ExcelUtil.getColumByName(file2, "需求编号");// 从excel里取出来的需求编号
 
 				ArrayList<ArrayList<String>> dicList = ExcelUtil.getColumnList(dictionary);
 
 				// 所有的需求修改单
-				ArrayList<ArrayList<String>> xqLists = ExcelUtil.dataSeparate(ExcelUtil.getColumByName(file2, "需求编号"),
-						ExcelUtil.getColumByName(file2, "测试执行人"));
+				ArrayList<ArrayList<String>> xqLists = ExcelUtil.dataSeparate(
+						ExcelUtil.removal(list, zxrList, verList, "需求").get(0),
+						ExcelUtil.removal(list, zxrList, verList, "需求").get(1));
 				ArrayList<String> xqList = xqLists.get(1);
 				System.out.println("xqList" + xqList.size());
 				// 缺陷类需求
@@ -253,16 +259,9 @@ public class Frame extends JFrame {
 
 				// 缺陷补丁
 				ArrayList<String> qxbdList = ExcelUtil.filterBd(file3);
-				//qxbdList = ExcelUtil.getColumByName(file3, "测试执行人");
-				
-			
-				
-				
-				
 
 				System.out.println("qxbdList:" + qxbdList.size());
 
-			
 				HashMap<String, Integer> qxbdMap = TjUtil.getCount(qxbdList, dicList);
 				HashMap<String, Integer> bdMap = TjUtil.getCount(bdList, dicList);
 				HashMap<String, Integer> qxxqMap = TjUtil.getCount(qxxqList, dicList);
@@ -278,9 +277,9 @@ public class Frame extends JFrame {
 				for (int k = 0; k < dicList.size(); k++) {
 					for (int l = 0; l < dicList.get(k).size(); l++) {
 						System.out.println(dicList.get(k).get(l));
-						if (dicList.get(k).get(l).length()>=2) {
+						if (dicList.get(k).get(l).length() >= 2) {
 							TjBean tjBean = new TjBean();
-							
+
 							tjBean.setName(dicList.get(k).get(l));
 							int bdNum = 0;
 							int bdSum = 0;
@@ -302,7 +301,6 @@ public class Frame extends JFrame {
 								xqSum = xqMap.get(dicList.get(k).get(l));
 							}
 
-							
 							tjBean.setBdNum(bdNum);
 							tjBean.setBdSum(bdSum);
 							tjBean.setXqNum(xqNum);
@@ -310,13 +308,12 @@ public class Frame extends JFrame {
 							if ((bdSum + xqSum) == 0 || (bdNum + xqNum) == 0) {
 								tjBean.setPercent("0%");
 							} else {
-								double result = ((double)(bdNum + xqNum) / (bdSum + xqSum));
+								double result = ((double) (bdNum + xqNum) / (bdSum + xqSum));
 								System.out.println(result);
 								DecimalFormat df = new DecimalFormat("0.00%");
 								String percent = df.format(result);
 								tjBean.setPercent(percent);
 							}
-							
 
 							beanList.add(tjBean);
 						}
