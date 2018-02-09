@@ -363,36 +363,41 @@ public class ExcelUtil {
 	 * 对存在多个需求编号的修改单进行分离
 	 * 
 	 * @param bdList
-	 *            补丁编号
+	 *            需求编号
 	 * @param zxrList
 	 *            测试执行人
+	 * @param verList
+	 * 			 修改版本
 	 * @return
 	 * 
-	 * 		list.add(0) 处理后的需求链表,list.add(1) 处理以后的测试执行人列表
+	 * 		list.add(0) 处理后的需求链表,list.add(1) 处理以后的测试执行人列表,list.add(2)处理后的修改版本列表 
 	 */
-	public static ArrayList<ArrayList<String>> dataSeparate(ArrayList<String> bdList, ArrayList<String> zxrList) {
+	public static ArrayList<ArrayList<String>> dataSeparate(ArrayList<String> xqList, ArrayList<String> zxrList,ArrayList<String> verList) {
 
 		ArrayList<ArrayList<String>> list = new ArrayList<>();
 
-		for (int i = 0; i < bdList.size(); i++) {
+		for (int i = 0; i < xqList.size(); i++) {
 
-			if (bdList.get(i).length() > 15) {
+			if (xqList.get(i).length() > 15) {
 
-				String[] str = bdList.get(i).split(",");
+				String[] str = xqList.get(i).split(",");
 
 				for (int j = 0; j < str.length; j++) {
-					bdList.add(str[j]);
+					xqList.add(str[j]);
 					zxrList.add(zxrList.get(i));
+					verList.add(verList.get(i));
 				}
 
-				bdList.remove(i);
+				xqList.remove(i);
 				zxrList.remove(i);
+				verList.remove(i);
 
 			}
 
 		}
-		list.add(0, bdList);
+		list.add(0, xqList);
 		list.add(1, zxrList);
+		list.add(2, verList);
 		log.debug("分离后的需求修改单数量" + zxrList.size());
 		return list;
 

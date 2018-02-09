@@ -236,21 +236,22 @@ public class Frame extends JFrame {
 				
 				logLabel.setText("");
 
-				ArrayList<String> verList = ExcelUtil.getColumByName(file2, "修改的版本");
-				ArrayList<String> zxrList = ExcelUtil.getColumByName(file2, "测试执行人");
-				ArrayList<String> list = ExcelUtil.getColumByName(file2, "需求编号");// 从excel里取出来的需求编号
+				ArrayList<String> verList = ExcelUtil.getColumByName(file2, "修改的版本");// 从修改单excel里取出来的版本信息
+				ArrayList<String> zxrList = ExcelUtil.getColumByName(file2, "测试执行人");// 从修改单excel里取出来的测试执行人
+				ArrayList<String> list = ExcelUtil.getColumByName(file2, "需求编号");// 从修改单excel里取出来的需求编号
 
 				ArrayList<ArrayList<String>> dicList = ExcelUtil.getColumnList(dictionary);
 
-				// 所有的需求修改单
-				ArrayList<ArrayList<String>> xqLists = ExcelUtil.dataSeparate(
-						ExcelUtil.removal(list, zxrList, verList, "需求").get(0),
-						ExcelUtil.removal(list, zxrList, verList, "需求").get(1));
-				ArrayList<String> xqList = xqLists.get(1);
+				
+				ArrayList<ArrayList<String>> xqLists = ExcelUtil.dataSeparate(list,zxrList,verList);// 将多个需求分离修改单列表
+				System.err.println(xqLists.get(1).get(0));;
+				ArrayList<ArrayList<String>> qcxqLists = ExcelUtil.removal(xqLists.get(0), xqLists.get(1), xqLists.get(2), "需求");//根据版本去重后的修改单集合
+				ArrayList<String> xqList = qcxqLists.get(1);//去重后的修改单测试执行人
+				System.err.println(xqList.get(0));
 				System.out.println("xqList" + xqList.size());
 				// 缺陷类需求
-				ArrayList<String> qxxqList = TjUtil.getTemFile(xqLists.get(0), ExcelUtil.getColumByName(file1, "需求编号"),
-						xqLists.get(1));
+				ArrayList<String> qxxqList = TjUtil.getTemFile(qcxqLists.get(0), ExcelUtil.getColumByName(file1, "需求编号"),
+						qcxqLists.get(1));
 				System.out.println("缺陷需求的个数" + qxxqList.size());
 
 				// 所有补丁
