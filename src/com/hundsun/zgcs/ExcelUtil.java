@@ -128,7 +128,7 @@ public class ExcelUtil {
 		Workbook workBook = getWorkBook(file);
 		Sheet sheet = workBook.getSheetAt(0);
 		// 获取行数
-		int rowNum = sheet.getLastRowNum() + 1;
+		int rowNum = sheet.getPhysicalNumberOfRows();
 		log.debug(file.getName() + "行数为：" + rowNum);
 
 		Row row = sheet.getRow(0);
@@ -142,7 +142,10 @@ public class ExcelUtil {
 				// 获取单元格
 				Cell cell = sheet.getRow(i).getCell(j);
 				// 将获取的单元格内容存到链表
-				cellList.add(getStringValueFromCell(cell));
+				if (getStringValueFromCell(cell) != null) {
+					cellList.add(getStringValueFromCell(cell));
+				}
+
 			}
 			colList.add(cellList);
 
@@ -170,8 +173,8 @@ public class ExcelUtil {
 			}
 		}
 		log.debug(name + "列的行数：" + list.size());
-		if(list.size() ==0 ) {
-		log.error("列名为" + name + "列未取到，请检查Excel是否正确");
+		if (list.size() == 0) {
+			log.error("列名为" + name + "列未取到，请检查Excel是否正确");
 		}
 		return list;
 
@@ -191,6 +194,10 @@ public class ExcelUtil {
 	 */
 	public static ArrayList<ArrayList<String>> removal(ArrayList<String> keyList, ArrayList<String> valueList,
 			ArrayList<String> verList, String type) {
+
+		keyList.remove(0);
+		valueList.remove(0);
+		verList.remove(0);
 
 		ArrayList<ArrayList<String>> list = new ArrayList<>();
 		if (type == "补丁") {
@@ -367,16 +374,17 @@ public class ExcelUtil {
 	 * @param zxrList
 	 *            测试执行人
 	 * @param verList
-	 * 			 修改版本
+	 *            修改版本
 	 * @return
 	 * 
-	 * 		list.add(0) 处理后的需求链表,list.add(1) 处理以后的测试执行人列表,list.add(2)处理后的修改版本列表 
+	 * 		list.add(0) 处理后的需求链表,list.add(1) 处理以后的测试执行人列表,list.add(2)处理后的修改版本列表
 	 */
-	public static ArrayList<ArrayList<String>> dataSeparate(ArrayList<String> xqList, ArrayList<String> zxrList,ArrayList<String> verList) {
+	public static ArrayList<ArrayList<String>> dataSeparate(ArrayList<String> xqList, ArrayList<String> zxrList,
+			ArrayList<String> verList) {
 
 		ArrayList<ArrayList<String>> list = new ArrayList<>();
 
-		for (int i = 0; i < xqList.size(); i++) {
+		for (int i = 1; i < xqList.size(); i++) {
 
 			if (xqList.get(i).length() > 15) {
 
@@ -415,23 +423,25 @@ public class ExcelUtil {
 		log.debug("去重前的补丁数量");
 		ArrayList<String> reasonList = getColumByName(file, "补丁原因");
 		ArrayList<String> zxrList = getColumByName(file, "测试执行人");
+		log.debug("补丁单总数为" + zxrList.size());
 
 		log.debug("筛选前的补丁数量" + reasonList.size());
-		ArrayList<ArrayList<String>> list = getColumnList(file);
-		//ArrayList<ArrayList<String>> resList = new ArrayList<>();
+		// ArrayList<ArrayList<String>> list = getColumnList(file);
+		// ArrayList<ArrayList<String>> resList = new ArrayList<>();
 		ArrayList<String> resList = new ArrayList<>();
 
 		for (int i = 1; i < reasonList.size(); i++) {
 
 			// 判断是否缺陷原因是否是TS回复的普通缺陷和影响业务开展
 			if ((reasonList.get(i).equals("影响业务开展") || reasonList.get(i).equals("TS回复的普通缺陷"))) {
-				
-					resList.add(zxrList.get(i));
-			
+
+				resList.add(zxrList.get(i));
+
 			}
 
 		}
 		log.debug("筛选后的补丁数量" + resList.size());
+
 		return resList;
 	}
 

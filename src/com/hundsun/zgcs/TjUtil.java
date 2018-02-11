@@ -129,7 +129,7 @@ public class TjUtil {
 		log.debug("修改单需求列表长度：  " + xgList.size());
 		log.debug("修改单测试执行人列表长度：  " + targetList.size());
 		log.debug("需求单需求列表长度：  " + xqList.size());
-		for (int i = 1; i < xgList.size(); i++) {
+		for (int i = 0; i < xgList.size(); i++) {
 			// xqList包含元素xgList.get(i)
 			for (int j = 0; j < xqList.size(); j++) {
 				if (xgList.get(i).equals(xqList.get(j))) {
@@ -168,7 +168,7 @@ public class TjUtil {
 					if (column.get(i).indexOf(list.get(j).get(p)) != -1) {
 						// 判断键值是否存在
 						if (map.containsKey(list.get(j).get(p))) {
-							map.put(list.get(j).get(p), map.get(list.get(j).get(p)) + 1);
+							map.put(list.get(j).get(p), map.get(list.get(j).get(p)) + 1);	
 						} else {
 							map.put(list.get(j).get(p), 1);
 						}
