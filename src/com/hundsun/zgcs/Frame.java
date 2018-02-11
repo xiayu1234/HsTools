@@ -98,7 +98,7 @@ public class Frame extends JFrame {
 		log.debug("数据字典的路径" + dictionary.getAbsolutePath());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 600, 450);
-		setTitle("Statistics.exe");
+		setTitle("Statistics(v1.0.2)");
 		JPanel contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
@@ -106,12 +106,6 @@ public class Frame extends JFrame {
 
 		JPanel panel = new JPanel();
 		contentPane.add(panel, BorderLayout.CENTER);
-
-		// 下拉框
-		/*
-		 * jcb = new JComboBox(); jcb.addItem("缺陷类需求单统计"); jcb.addItem("临时补丁遗漏统计");
-		 * jcb.setBounds(80, 50, 490, 20); contentPane.add(jcb); jcb.setVisible(true);
-		 */
 
 		JButton button1 = new JButton("选择文件");
 		button1.setBounds(480, 170, 90, 20);
@@ -243,16 +237,11 @@ public class Frame extends JFrame {
 				ArrayList<ArrayList<String>> dicList = ExcelUtil.getColumnList(dictionary);
 
 				ArrayList<ArrayList<String>> xqLists = ExcelUtil.dataSeparate(list, zxrList, verList);// 将多个需求分离修改单列表
-			
+
 				ArrayList<ArrayList<String>> qcxqLists = ExcelUtil.removal(xqLists.get(0), xqLists.get(1),
 						xqLists.get(2), "需求");// 根据版本去重后的修改单集合
-				
-				for (int i = 0; i < qcxqLists.get(0).size(); i++) {
-					
-					System.out.println("需求编号" +  qcxqLists.get(0).get(i) + "的测试执行人：" +qcxqLists.get(1).get(i) );
-					
-				}
-				
+
+			
 				ArrayList<String> xqList = qcxqLists.get(1);// 去重后的修改单测试执行人
 				System.out.println("xqList" + xqList.size());
 				// 缺陷类需求
@@ -328,27 +317,26 @@ public class Frame extends JFrame {
 					}
 
 				}
-				
+
 				TjBean tjBean = new TjBean();
 				tjBean.setName("总计");
 				tjBean.setBdNum(qxbdList.size());
-				tjBean.setBdSum(bdList.size() - 1);//去除表头
+				tjBean.setBdSum(bdList.size() - 1);// 去除表头
 				tjBean.setXqNum(qxxqList.size());
 				tjBean.setXqSum(xqList.size());
 				if ((qxbdList.size() + (bdList.size() - 1)) == 0 || (qxxqList.size() + xqList.size()) == 0) {
 					tjBean.setPercent("0%");
 				} else {
-					double result = ((double)(qxbdList.size() + qxxqList.size()) / ((bdList.size() - 1 + xqList.size())));
+					double result = ((double) (qxbdList.size() + qxxqList.size())
+							/ ((bdList.size() - 1 + xqList.size())));
 					System.out.println(result);
 					DecimalFormat df = new DecimalFormat("0.00%");
 					String percent = df.format(result);
 					tjBean.setPercent(percent);
 					beanList.add(tjBean);
 				}
-				
+
 				long time = System.currentTimeMillis();
-				
-				
 
 				ExcelUtil.printExcel(beanList, "统计结果", time + "", cloList);
 				logLabel.setText("统计结束,请查看结果");

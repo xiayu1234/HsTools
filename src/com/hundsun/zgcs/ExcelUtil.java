@@ -176,6 +176,8 @@ public class ExcelUtil {
 		if (list.size() == 0) {
 			log.error("列名为" + name + "列未取到，请检查Excel是否正确");
 		}
+
+		list.remove(null);
 		return list;
 
 	}
@@ -420,20 +422,20 @@ public class ExcelUtil {
 	 */
 	public static ArrayList<String> filterBd(File file) {
 
-		log.debug("去重前的补丁数量");
 		ArrayList<String> reasonList = getColumByName(file, "补丁原因");
 		ArrayList<String> zxrList = getColumByName(file, "测试执行人");
+		ArrayList<String> jbList = getColumByName(file, "严重级别");
 		log.debug("补丁单总数为" + zxrList.size());
 
 		log.debug("筛选前的补丁数量" + reasonList.size());
-		// ArrayList<ArrayList<String>> list = getColumnList(file);
-		// ArrayList<ArrayList<String>> resList = new ArrayList<>();
+
 		ArrayList<String> resList = new ArrayList<>();
 
 		for (int i = 1; i < reasonList.size(); i++) {
 
 			// 判断是否缺陷原因是否是TS回复的普通缺陷和影响业务开展
-			if ((reasonList.get(i).equals("影响业务开展") || reasonList.get(i).equals("TS回复的普通缺陷"))) {
+			if ((reasonList.get(i).equals("影响业务开展") && (!(jbList.get(i).equals("需求")))
+					|| reasonList.get(i).equals("TS回复的普通缺陷") && (!(jbList.get(i).equals("需求"))))) {
 
 				resList.add(zxrList.get(i));
 
